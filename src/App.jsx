@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-const DB={async get(k){try{const r=await window.storage.get(k);return r?JSON.parse(r.value):null}catch{return null}},async set(k,v){try{await window.storage.set(k,JSON.stringify(v))}catch(e){console.error(e)}}};
+const _hasClaudeStorage=(typeof window!=='undefined'&&window.storage&&typeof window.storage.get==='function');
+const DB={async get(k){try{if(_hasClaudeStorage){const r=await window.storage.get(k);return r?JSON.parse(r.value):null}const s=localStorage.getItem(k);return s?JSON.parse(s):null}catch{return null}},async set(k,v){try{if(_hasClaudeStorage){await window.storage.set(k,JSON.stringify(v))}else{localStorage.setItem(k,JSON.stringify(v))}}catch(e){console.error(e)}}};
 const _f="'Poppins',sans-serif";
 const CH=["Paid Media","Email & ABM","Content & SEO","Events & Field","Philanthropy","Web","Creative","Organic Social"];
 const Q=[{t:"I never dreamed about success. I worked for it.",a:"Estée Lauder"},{t:"Think like a queen. A queen is not afraid to fail.",a:"Oprah Winfrey"},{t:"The most effective way to do it, is to do it.",a:"Amelia Earhart"},{t:"Done is better than perfect.",a:"Sheryl Sandberg"},{t:"Power is not given to you. You have to take it.",a:"Beyoncé"},{t:"I am deliberate and afraid of nothing.",a:"Audre Lorde"},{t:"A woman with a voice is, by definition, a strong woman.",a:"Melinda Gates"},{t:"The question isn't who's going to let me; it's who is going to stop me.",a:"Ayn Rand"}];
