@@ -33,6 +33,8 @@ const Modal=({open,onClose,title,children})=>{if(!open)return null;return<div st
 /* ═══ APP ═══ */
 export default function App(){
 const [pg,sP]=useState("home"),[sb,sSb]=useState(true),[accs,sA]=useState(ACCTS),[tasks,sT]=useState(DEF_TASKS),[lnch,sL]=useState(DEF_LNCH),[goals,sG]=useState(DEF_GOALS),[content,sC]=useState(DEF_CONTENT),[loaded,sLoaded]=useState(false),[welcome,sW]=useState(true),[selAcc,sSA]=useState(null),[modal,sM]=useState(null),[eI,sEI]=useState(null),[form,sF]=useState({}),[aiL,sAL]=useState({}),[aiR,sAR]=useState({}),[aiChat,sAC]=useState(""),[aiH,sAH]=useState([]),[mtgAcc,sMtg]=useState(""),[mtgR,sMtgR]=useState(null),[chExp,sCE]=useState(null);
+const [taskExp,sTExp]=useState(null);
+const [showArchive,sShowArch]=useState(false);
 const [quote]=useState(Q[Math.floor(Math.random()*Q.length)]);
 const hr=new Date().getHours(),tg=hr<12?"Good morning":hr<17?"Good afternoon":"Good evening";
 
@@ -142,8 +144,6 @@ const rContent=()=><><h2 style={h2s}>Content & Activation</h2><p style={sub}>Tra
 
 const rLaunches=()=><><h2 style={h2s}>Launch Tracker</h2><p style={sub}>All campaigns across accounts</p>{["upcoming","in-progress","launched"].map(st=><div key={st} style={{marginTop:12}}><h3 style={h3s}>{st==="in-progress"?"In Progress":st.charAt(0).toUpperCase()+st.slice(1)}</h3>{lnch.filter(l=>l.st===st).map(l=><div key={l.id} style={{...crd,display:"flex",justifyContent:"space-between",alignItems:"center"}}><div><div style={{fontSize:13,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{l.name}</div><div style={{fontSize:11,color:"#888",fontFamily:_f}}>{l.acc} · {l.ch} · {l.dt}</div></div><SB s={st}/></div>)}{lnch.filter(l=>l.st===st).length===0&&<p style={{fontSize:11,color:"#888",fontFamily:_f}}>None</p>}</div>)}</>;
 
-const [taskExp,sTExp]=useState(null);
-const [showArchive,sShowArch]=useState(false);
 const stColors={"Not Started":"#888","In Progress":"#c9956b","Blocked":"#e53935","Complete":"#4caf50"};
 const rTasks=()=><><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}><h2 style={h2s}>Tasks & Reminders</h2><button onClick={()=>oM("addTask")} style={btn}>+ Add Task</button></div>
   <div style={{display:"flex",gap:8,marginBottom:14}}>{TASK_STATUSES.map(s=>{const c=tasks.filter(t=>t.status===s&&!t.archived).length;return<div key={s} style={{...crd,flex:1,textAlign:"center",padding:10,marginBottom:0,borderLeft:`3px solid ${stColors[s]}`}}><div style={{fontSize:18,fontWeight:700,color:stColors[s],fontFamily:_f}}>{c}</div><div style={{fontSize:8,color:"#888",textTransform:"uppercase",letterSpacing:1,fontFamily:_f}}>{s}</div></div>})}</div>
