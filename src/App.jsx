@@ -1,230 +1,159 @@
 import { useState, useEffect } from "react";
-const _hasClaudeStorage=(typeof window!=='undefined'&&window.storage&&typeof window.storage.get==='function');
-const DB={async get(k){try{if(_hasClaudeStorage){const r=await window.storage.get(k);return r?JSON.parse(r.value):null}const s=localStorage.getItem(k);return s?JSON.parse(s):null}catch{return null}},async set(k,v){try{if(_hasClaudeStorage){await window.storage.set(k,JSON.stringify(v))}else{localStorage.setItem(k,JSON.stringify(v))}}catch(e){console.error(e)}}};
-const _f="'Poppins',sans-serif";
-const CH=["Paid Media","Email & ABM","Content & SEO","Events & Field","Philanthropy","Web","Creative","Organic Social"];
-const Q=[{t:"I never dreamed about success. I worked for it.",a:"Estée Lauder"},{t:"Think like a queen. A queen is not afraid to fail.",a:"Oprah Winfrey"},{t:"The most effective way to do it, is to do it.",a:"Amelia Earhart"},{t:"Done is better than perfect.",a:"Sheryl Sandberg"},{t:"Power is not given to you. You have to take it.",a:"Beyoncé"},{t:"I am deliberate and afraid of nothing.",a:"Audre Lorde"},{t:"A woman with a voice is, by definition, a strong woman.",a:"Melinda Gates"},{t:"The question isn't who's going to let me; it's who is going to stop me.",a:"Ayn Rand"}];
+import { DB } from "./storage";
+import { ACCOUNTS, DEFAULT_TASKS, DEFAULT_LAUNCHES, DEFAULT_GOALS, CONTENT, QUOTES } from "./data";
+import Home from "./pages/Home";
+import Accounts from "./pages/Accounts";
+import AccountDetail from "./pages/AccountDetail";
+import Channels from "./pages/Channels";
+import ContentPage from "./pages/Content";
+import Tasks from "./pages/Tasks";
+import { Launches, AIWarRoom, Goals, Leadership, Automation } from "./pages/OtherPages";
+import MeetingPrep from "./pages/MeetingPrep";
 
-async function callAI(s,m){try{const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:s,messages:[{role:"user",content:m}]})});const d=await r.json();return d.content?.map(b=>b.text||"").join("\n")||"No response."}catch{return"AI unavailable — try again shortly."}}
+const _f = "'Poppins',sans-serif";
 
-const ACCTS=[
-{id:"boa",name:"Bank of America",ini:"BA",ind:"Financial Services",st:"key",hp:88,rev:"$102M",mp:"Powers BOA execution across AML, cloud, and AI. Key account with strong infrastructure partnership. Competitive pressure from Oxford, Capgemini, Slalom.",signals:["Third-party risk governance tightening","Data privacy and cross-border compliance increasing","Open banking readiness","Financial crime, AML, KYC acceleration"],pains:["Cost, conversion, scalability objections","Need customization vs rigid models","Enablement gaps: thought leadership, AI proof","Talent Services not landing — needs positioning","Competitor pressure: Oxford, Capgemini, Slalom"],goals:["Protect/expand AML + Financial Crimes","Advance AI + Cloud position","Credibility driving sales enablement","Strengthen stakeholder access"],audience:["Procurement/Vendor Management","Financial Crimes/AML leaders","Infrastructure/Cloud Leaders","AI/Data leaders","Fraud/Security stakeholders"],services:["AML program delivery","Fraud protection support","Tech delivery + infrastructure","Staff aug for cloud environments","Expansion: Crimes/AML, Cloud, AI"],tactics:["Web — new messaging + global","Thought Leadership — AI, AML outcomes","Brand Advocacy — Charlotte sales leaders","Local Activation — Charlotte momentum","Sales enablement — case studies into BOA assets"],channels:["Email & ABM","Content & SEO","Web","Paid Media","Events & Field"],smes:["Grace Han"],notes:"",strat:"",lt:"2026-04-05"},
-{id:"sf",name:"State Farm",ini:"SF",ind:"Financial Services",st:"new-logo",hp:45,rev:"$2M",mp:"Navigating digital transformation + catastrophic loss recovery. Net income $12.9B in 2025. New CDAO Jon Francis appointed March 2026. Deploying AI for claims triage via OpenAI. Goal: turn ATL proximity into partnership, reposition from OSP vendor to CSP-ready partner.",signals:["Net income $12.9B, revenue $132.3B (+7.5% YoY)","$3.1B homeowners underwriting loss (improved from $3.6B)","Jon Francis promoted to CDAO + Head of Digital","Dual digital leadership: Francis + Joe Park as EVP/CDIO","AI claims triage via OpenAI Frontier platform","Digital knowledge assistant deployed for contact centers"],pains:["AI/ML talent for claims automation — competing nationally","Data/analytics hiring surge under new CDAO mandate","Digital product/UX engineers for platform modernization","Transformation speed vs homeowners loss management","Property insurance cat-risk and climate modeling talent gap"],goals:["Turn ATL proximity into partnership","Reposition from OSP vendor to trusted delivery partner","Earn CSP eligibility (Tech + Non-Tech)","$2M 2026 revenue goal","Measurable CSP milestone progress"],audience:["Procurement: Vendor Mgmt, Directors, Category Leads","Claims/Underwriting: Directors/VP, Ops Managers","Data + Tech: Head of Data, AI/Automation Leaders"],services:["Cost Optimization — reduce spend without risk","Rapid Response — surge support for operations","Tech Scale — data delivery + AI-ready foundations"],tactics:["Web — Insurance page with OSP/CSP language","Social/PR — organic through IG SMEs, local PR","Brand Advocacy — LinkedIn credibility coaching","TL Ads — targeted to top-of-funnel","Local Activation — ATL 'IG experience' sessions","IP-based customization for SF contacts","Proof pack: case snapshots + metrics"],channels:["Paid Media","Email & ABM","Web","Organic Social","Events & Field","Content & SEO"],smes:["Charlie Loveall","Rachel Peacock"],notes:"",strat:"Two-track: Track A (Deepen Tech) + Track B (Break Non-Tech). CSP eligibility within 6-9 months.",lt:"2026-04-01"},
-{id:"c1",name:"Capital One",ini:"C1",ind:"Financial Services",st:"re-entry",hp:30,rev:"TBD",mp:"Re-entering after long non-engagement. Post-Discover merger reduced vendor list. Fraud risk driving vendor scrutiny. Must rebuild trust from 'vendor risk' to fraud-aware partner.",signals:["Procurement trust is the barrier","Fraud risk driving vendor scrutiny","Post-Discover merger raised vendor bar","AML/KYC regulatory pressure increasing","Third-party risk governance tightening"],pains:["Fraud + false candidate exposure","AML/KYC throughput + regulatory pressure","Procurement trust + vendor consolidation","Rebuilding from 'vendor risk' perception","Limited access beyond MSP layer"],goals:["Re-enter vendor ecosystem — earn one safe yes","Rebuild procurement/ESM trust","Reposition as fraud-aware partner","Win low-risk first engagement","Expand based on performance, not persuasion"],audience:["Fraud Risk/Security/Talent Risk Leaders","AML/KYC Program Owners, Transaction Monitoring","Procurement Category Leaders, ESM Leadership VP+"],services:["Fraud/Risk Protection — fraud-first screening","AML/KYC Solutions — compliant delivery","Procurement Re-Entry — controlled low-risk approach"],tactics:["Web — C1 landing page + proof hub","Paid Social — organic through IG SMEs","Email — FS tailored to known C1 contacts","Brand Advocacy — risk-first delivery posts","Targeted Outreach — procurement + AML/KYC leaders","Events — small local touchpoint for trust"],channels:["Paid Media","Email & ABM","Web","Content & SEO","Events & Field"],smes:["Grace Han"],notes:"",strat:"Lead with protection → Earn low-risk win → Convert proof into expansion",lt:"2026-03-15"},
-{id:"jnj",name:"Johnson & Johnson",ini:"JJ",ind:"Life Sciences",st:"key",hp:90,rev:"$104M",mp:"Accelerate innovation across R&D, manufacturing, supply chain. Proven long-term partnership. Strong custom teams and managed service delivery. Shifting from building facilities to operationalizing them.",signals:["Shift to operationalizing equipment, tech, workforce","New US facility builds with major investment","AI enablement in manufacturing/operations","Continued specialized scientific talent need","LATAM global delivery expansion"],pains:["Limited brand recognition in enterprise procurement","Vendor selection influenced by analyst platforms","Perceived gap in R+D and manufacturing expertise","Difficulty demonstrating credibility in technical LS","Competitive pressure from specialized consultants","Lost opportunities from executive consulting questions"],goals:["Protect & expand existing delivery","Strengthen executive/procurement engagement","Position as services partner beyond staffing","Grow services across R&D, manufacturing, supply chain"],audience:["Procurement/Vendor Management","Manufacturing/Operations Senior Leaders","R+D/Scientific program leadership","Supply chain/Commercialization stakeholders","Digital innovation leaders (AI + data)"],services:["FSP custom teams","LS technical staffing + consulting","Manufacturing ops + facility staffing","QA/QC + technical documentation","Data engineering + enablement","Scientific insourcing + R+D expertise","Tech transfer + commercialization","Facility stand-up + operational readiness"],tactics:["Content — Speed to Commercialization, GxP, Tech Transfer, AI","Brand Advocacy — consistent LS talk track","Sales Enablement — proof packs by service line","Priority Account Plays — geo-targeted + account narrative","Web — updated J+J pages with proof + CTAs"],channels:["Content & SEO","Web","Paid Media","Email & ABM","Events & Field","Organic Social"],smes:["Charlie Loveall","Bretlyn Morales","Chandan Barhate"],notes:"",strat:"",lt:"2026-04-06"},
-{id:"lilly",name:"Eli Lilly",ini:"EL",ind:"Life Sciences",st:"growth",hp:55,rev:"TBD",mp:"Rapid GLP-1 scale-up driving M&Q demand. 80% of investment in Manufacturing & Quality. Investing heavily in AI process optimization. Saturated with vendors — needs strategic FSP partners. IG underrecognized in M&Q and AI/Data.",signals:["Rapid M&Q scale-up: oral GLP-1 + future pipeline","Accelerating digital transformation + AI/data","Cost, quality, compliance pressure while scaling","New facilities: Lebanon IN, Virginia, Houston, Cork Ireland","80% of investment in Manufacturing & Quality"],pains:["Rapid M&Q Scale Up — compliant workforce fast","Digital/AI Acceleration — AI-driven optimization","Cost/Compliance Pressure vs Accenture/Deloitte","Limited IG visibility beyond staffing","Not yet positioned as trusted FSP leader"],goals:["Increase brand awareness + relationship depth","Position as trusted FSP (not just staffing)","Increased meetings with decision makers","Recognition as trusted FSP partner"],audience:["M&Q: VP Manufacturing, Director Engineering, QA","AI/Digital: Heads of Data, AI Digital Labs","Procurement: Procurement & Category Leaders"],services:["M&Q — stand up, train, manage compliant workforce","AI/Data/Digital — build + integrate compliant AI/ML","FSP Model — customizable, scalable delivery","Engineering teams + documentation","Validation (CQV/CSV)"],tactics:["Web — LS page anchored in FSP model","Social/PR — organic through LS SMEs, Chandan PR","Personal Branding — sessions for Lilly sales leaders","TL Ads — targeted to top-of-funnel","IP-based customization for Lilly contacts","Email — LS tailored to known Lilly contacts","Retargeting — highlight partnership wins"],channels:["Content & SEO","Web","Paid Media","Email & ABM","Organic Social","Events & Field"],smes:["Charlie Loveall","Bretlyn Morales","Chandan Barhate","Bri Sundstrom"],notes:"",strat:"Showcase J&J/Merck delivery success, position as equally capable FSP.",lt:"2026-04-02"}
-];
+export default function App() {
+  const [pg, sP] = useState("home");
+  const [sb, sSb] = useState(true);
+  const [accs, sA] = useState(ACCOUNTS);
+  const [tasks, sT] = useState(DEFAULT_TASKS);
+  const [lnch, sL] = useState(DEFAULT_LAUNCHES);
+  const [goals, sG] = useState(DEFAULT_GOALS);
+  const [content, sC] = useState(CONTENT);
+  const [loaded, sLoaded] = useState(false);
+  const [welcome, sW] = useState(true);
+  const [selAcc, sSA] = useState(null);
+  const [aiH, sAH] = useState([]);
 
-const CH_STRATS={"Paid Media":{e:"📣",s:"Geo-targeted thought leadership ads by account. Retarget engaged contacts. Boost SME posts.",opts:["LinkedIn TL ads — higher CTR for FS/LS decision-maker titles","Geo-fence account HQs: Charlotte (BOA), ATL (SF), McLean (C1), RTP (Lilly)","Retargeting: TOF engagers → MOF proof packs → BOF case study","A/B test: outcomes messaging vs people-first trust per industry","IP-based targeting for known account domains"],news:["LinkedIn Thought Leader Ads allow boosting employee posts directly","Meta B2B targeting now includes job function + seniority layering","Google Performance Max supports B2B lead gen with CRM integration","ABM platforms (6sense, Demandbase) offer intent signal layering"],plays:["BOA → Charlotte retarget with AML/AI proof","SF → ATL geo-targeted, proximity + cost optimization","C1 → Light LinkedIn to fraud/procurement in Dallas/Richmond","J&J → RTP/Lebanon geo-target, manufacturing + FSP","Lilly → TL ads to M&Q/AI titles at target locations"]},"Email & ABM":{e:"📧",s:"Account-tailored email series. Nurture by funnel stage. Proof-driven content drops.",opts:["Segment by account + funnel stage — TOF trends, MOF proof, BOF case studies","Personalize: 'AML execution' for BOA vs 'GxP-ready delivery' for J&J","Trigger-based: website visit → email within 24hrs","SME quotes/headshots build recognition pre-meeting","Track email-to-meeting conversion by account"],news:["HubSpot AI email writer for personalized sequences","Intent data (Bombora, 6sense) feeds into HubSpot workflows","Gmail/Yahoo DMARC authentication now required","Interactive email elements showing 2-3x engagement"],plays:["BOA → AML/AI drip + proof pack follow-up","SF → Insurance content, CSP-language to procurement","C1 → Risk-first fraud prevention content","J&J → Manufacturing + tech transfer to R&D leaders","Lilly → FSP model + M&Q to procurement/engineering"]},"Content & SEO":{e:"📝",s:"POV content builds credibility. Supports account conversations. Success = referenced in meetings.",opts:["Prioritize proof content over awareness — case studies move deals","SEO clusters: 'AML staffing', 'FSP life sciences partner'","Account-specific repurposing: POV → PDF + carousel + email","Quarterly cadence: Speed to Commercialization, GxP, AI in FS","Gate BOF content to capture unknown visitor info"],news:["Google AI Overviews dominating SERP — optimize for snippets","LinkedIn articles indexed by Google — dual visibility","Short-form (<1200 words) outperforming for B2B","Video SEO: embed 2-3 min explainers for 2x time-on-page"],plays:["BOA → AI in AML, deepfake fraud, execution outcomes","SF → Cost optimization, OSP-to-CSP, surge staffing","C1 → Risk-first POV, fraud prevention, AML compliance","J&J → Speed to commercialization, tech transfer, facility readiness","Lilly → AI in pharma manufacturing, GLP-1 delivery, FSP positioning"]},"Events & Field":{e:"🎯",s:"Local activation. 'Show don't tell' sessions. Stakeholder interaction and relationship building.",opts:["Small 8-12 person dinners over large conferences","'IG Experience': 45-min showcase + Q&A at IG offices","Bundle events with account campaigns for conversion","Immediate follow-up: email 24hrs, LinkedIn 48hrs","Document events for social proof + retargeting"],news:["In-person outperforming hybrid for relationship accounts","Executive roundtable format trending (6-8 C-suite, no pitch)","Micro-events showing higher ABM conversion","Event platforms (Splash, Bizzabo) integrate with HubSpot"],plays:["BOA → Charlotte in-office stakeholder touchpoints","SF → ATL 'show don't tell' CSP session","C1 → Small Richmond/McLean trust-building touchpoint","J&J → RTP facility visit, manufacturing showcase","Lilly → Indianapolis/Lebanon M&Q activation"]},"Philanthropy":{e:"💝",s:"Community stories build trust. People-first culture. Proof we invest where we work.",opts:["Align with account geographies — ATL, Charlotte, Indianapolis","Create shareable 'community impact' content","Partner with local orgs near account HQs","Document with video/photo for social + retargeting","Connect to brand shift: 'community partners, not vendors'"],news:["CSR influencing vendor selection in procurement","ESG reporting growing — document for RFPs","Employee volunteerism boosting brand advocacy","Local community stories 3x engagement on LinkedIn"],plays:["SF → ATL community investment stories","BOA → Charlotte community engagement","Lilly → Indianapolis community presence","J&J → Community health initiatives","C1 → Richmond/McLean brand warmth rebuilding"]},"Web":{e:"🌐",s:"FS/LS story in 60 seconds. Account-specific landing pages. IP-based customization.",opts:["Account landing pages: SF hub, C1 proof hub, Lilly capabilities","IP-based customization for known account domains","FS page: sub-sector language + proof modules","LS page: FSP model + manufacturing + global delivery","Clear CTAs: 'See how we deliver' + gated case studies"],news:["Personalization platforms (Mutiny) support ABM customization","Core Web Vitals: Google prioritizing page speed","AI chatbots showing 30-40% qualified lead increase","Progressive profiling replacing single gate forms"],plays:["SF → OSP+CSP language, insurance proof, ATL proximity","C1 → Fraud-first proof hub, pain point anchored","BOA → Updated global delivery + AML/AI proof","J&J → Manufacturing proof + tech transfer","Lilly → IP-personalized M&Q + FSP + SME spotlights"]},"Creative":{e:"🎨",s:"Account-specific visual assets. LinkedIn carousels, infographics, video spotlights, proof packs.",opts:["Visual proof packs: 1-page PDF + carousel + email hero","SME spotlight videos (2-3 min) — Chandan for LS","Industry infographics: 'IG in FS' and 'IG in LS' at-a-glance","Consistent visual system per account — branded templates","Short-form video: 60-sec overviews, 30-sec proof clips"],news:["LinkedIn carousels getting 2-3x engagement vs single image","Short-form vertical video viable for B2B — test SME clips","Canva enterprise supports brand template locking","AI-generated creative accelerating ideation speed"],plays:["SF → POV → PDF + carousel + boosted","BOA → AML metrics proof pack + timeline visual","C1 → Screening rigor infographic, governance visual","J&J → Manufacturing capabilities chart, FSP comparison","Lilly → M&Q infographic, AI visual, Chandan spotlight"]},"Organic Social":{e:"📱",s:"SME-led organic. Sales leaders sharing insights. Personal branding coaching for target audience visibility.",opts:["Personal branding sessions — coach to post 2-3x/week","'React and comment' calendar for industry news moments","Pre-approved LinkedIn post library by industry","Employee advocacy: 10 employees = 5-10x company page reach","Track top-performing SME posts, double down on style"],news:["LinkedIn algorithm favors comments over likes — coach substantive comments","LinkedIn newsletters gaining B2B traction","Employee advocacy platforms integrate for one-click sharing","LinkedIn Collaborative Articles driving profile visibility"],plays:["BOA → Sales leaders share AI/AML targeting Charlotte contacts","SF → LinkedIn coaching, insurance expertise to procurement","C1 → Personalized outreach + discussion prompting","J&J → LS SMEs share manufacturing + tech transfer insights","Lilly → Chandan + team personal branding on pharma AI/M&Q"]}};
+  const [quote] = useState(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
+  const hr = new Date().getHours();
+  const tg = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
 
-const TASK_STATUSES=["Not Started","In Progress","Blocked","Complete"];
-const DEF_TASKS=[{id:"t1",text:"Finalize Q2 BOA campaign brief — AML thought leadership",status:"In Progress",due:"2026-04-08",pr:"high",notes:"Need to pull latest AML metrics from delivery team. Check with Grace for BOA stakeholder updates.",acc:"Bank of America",archived:false},{id:"t2",text:"Update State Farm Insurance page with OSP + CSP language",status:"Not Started",due:"2026-04-10",pr:"high",notes:"Coordinate with web team. Reference slides 21-23 from FS strategy deck.",acc:"State Farm",archived:false},{id:"t3",text:"Build Capital One risk-first re-entry POV",status:"Not Started",due:"2026-04-12",pr:"medium",notes:"Blog/article format. Focus on fraud-first screening, candidate authenticity. Grace Han to review.",acc:"Capital One",archived:false},{id:"t4",text:"Prep J&J monthly deck — manufacturing proof points",status:"In Progress",due:"2026-04-11",pr:"high",notes:"Include tech transfer metrics, facility stand-up timeline, global delivery LATAM update.",acc:"Johnson & Johnson",archived:false},{id:"t5",text:"Eli Lilly personal branding sessions for sales leaders",status:"Not Started",due:"2026-04-14",pr:"medium",notes:"Schedule with Bretlyn and Bri. Focus on M&Q and AI/Digital talking points for LinkedIn.",acc:"Eli Lilly",archived:false},{id:"t6",text:"Review LinkedIn ad performance — FS thought leadership",status:"Not Started",due:"2026-04-09",pr:"medium",notes:"Pull CTR and engagement by account geo. Compare Charlotte vs ATL vs Dallas performance.",acc:"",archived:false},{id:"t7",text:"Create State Farm proof pack: case snapshots + metrics",status:"Complete",due:"2026-04-05",pr:"high",notes:"Completed. Includes cost optimization case, delivery model overview, and retention metrics.",acc:"State Farm",archived:true}];
-const DEF_LNCH=[{id:"l1",name:"BOA AML Thought Leadership Series",st:"in-progress",acc:"Bank of America",ch:"Content & SEO",dt:"2026-04-15"},{id:"l2",name:"State Farm Local Activation — ATL",st:"upcoming",acc:"State Farm",ch:"Events & Field",dt:"2026-04-22"},{id:"l3",name:"Capital One Risk-First POV Campaign",st:"upcoming",acc:"Capital One",ch:"Paid Media",dt:"2026-04-28"},{id:"l4",name:"J&J Manufacturing Proof Pack",st:"in-progress",acc:"Johnson & Johnson",ch:"Web",dt:"2026-04-12"},{id:"l5",name:"Eli Lilly IP-Based Landing Page",st:"upcoming",acc:"Eli Lilly",ch:"Web",dt:"2026-05-01"},{id:"l6",name:"FS Geo-Targeted LinkedIn Campaign",st:"launched",acc:"Bank of America",ch:"Paid Media",dt:"2026-03-28"}];
-const DEF_GOALS=[{id:"g1",name:"Progress priority FS accounts",tgt:3,cur:1,tp:"accounts"},{id:"g2",name:"Launch 8 campaigns this quarter",tgt:8,cur:4,tp:"launches"},{id:"g3",name:"Complete 25 tasks this week",tgt:25,cur:15,tp:"tasks"},{id:"g4",name:"Build proof packs per service line",tgt:6,cur:2,tp:"strategy"},{id:"g5",name:"Document case studies",tgt:5,cur:1,tp:"strategy"}];
-const DEF_CONTENT=[{id:"c1",title:"6 Reasons Cybersecurity is Critical in Finance",type:"Blog",ch:"Content & SEO",ind:"FS",status:"live",activated:["Web","Organic Social"]},{id:"c2",title:"Elevating CX in Financial Services",type:"Blog",ch:"Content & SEO",ind:"FS",status:"live",activated:["Web"]},{id:"c3",title:"4 Trends in Financial Services 2026",type:"Blog",ch:"Content & SEO",ind:"FS",status:"live",activated:["Web","Email & ABM"]},{id:"c4",title:"Leading Business Transformation with AI",type:"Blog",ch:"Content & SEO",ind:"FS",status:"live",activated:["Web"]},{id:"c5",title:"Anti-Money Laundering: Compliance Bottleneck",type:"Blog",ch:"Content & SEO",ind:"FS",status:"live",activated:["Web","Paid Media"]},{id:"c6",title:"Smarter Science: Trends Shaping LS",type:"Blog",ch:"Content & SEO",ind:"LS",status:"live",activated:["Web","Organic Social"]},{id:"c7",title:"Biotech Challenges: 3 Barriers",type:"Blog",ch:"Content & SEO",ind:"LS",status:"live",activated:["Web"]},{id:"c8",title:"Accelerating Innovation in Life Sciences",type:"Blog",ch:"Content & SEO",ind:"LS",status:"live",activated:["Web","Organic Social"]},{id:"c9",title:"AI in Pharma R&D and Manufacturing",type:"Blog",ch:"Content & SEO",ind:"LS",status:"live",activated:["Web","Email & ABM"]},{id:"c10",title:"Life Sciences Global Delivery: Right-Shoring",type:"Blog",ch:"Content & SEO",ind:"LS",status:"live",activated:["Web"]},{id:"c11",title:"Intro to Life Sciences (Chandan video)",type:"Video",ch:"Organic Social",ind:"LS",status:"live",activated:["Web","Organic Social"]},{id:"c12",title:"State Farm POV (1-pager)",type:"PDF",ch:"Content & SEO",ind:"FS",status:"needed",activated:[]},{id:"c13",title:"BOA AML Case Study",type:"Case Study",ch:"Content & SEO",ind:"FS",status:"needed",activated:[]},{id:"c14",title:"Capital One Risk-First Re-Entry POV",type:"Blog",ch:"Content & SEO",ind:"FS",status:"in-progress",activated:[]},{id:"c15",title:"J&J Manufacturing Case Study",type:"Case Study",ch:"Content & SEO",ind:"LS",status:"needed",activated:[]},{id:"c16",title:"Eli Lilly M&Q/AI Case Study",type:"Case Study",ch:"Content & SEO",ind:"LS",status:"needed",activated:[]}];
+  // Persistence
+  useEffect(() => {
+    (async () => {
+      const [a, t, l, g, c, ah] = await Promise.all([
+        DB.get("v6-a"), DB.get("v6-t"), DB.get("v6-l"), DB.get("v6-g"), DB.get("v6-c"), DB.get("v6-ah")
+      ]);
+      if (a) sA(a);
+      if (t) sT(t);
+      if (l) sL(l);
+      if (g) sG(g);
+      if (c) sC(c);
+      if (ah) sAH(ah);
+      sLoaded(true);
+    })();
+  }, []);
 
-/* ═══ COMPONENTS ═══ */
-const GoalRing=({g,sz=60})=>{const r=(sz-5)/2,c=2*Math.PI*r,p=Math.min(g.cur/g.tgt,1),o=c-p*c;const cl={accounts:"#c9956b",launches:"#d4789e",tasks:"#555",strategy:"#b5906f"};return<div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3}}><svg width={sz} height={sz} style={{transform:"rotate(-90deg)"}}><circle cx={sz/2} cy={sz/2} r={r} fill="none" stroke="#f0e6e0" strokeWidth={5}/><circle cx={sz/2} cy={sz/2} r={r} fill="none" stroke={cl[g.tp]||"#c9956b"} strokeWidth={5} strokeDasharray={c} strokeDashoffset={o} strokeLinecap="round" style={{transition:"stroke-dashoffset 0.8s"}}/></svg><span style={{fontSize:10,fontWeight:600,color:"#1a1a1a"}}>{g.cur}/{g.tgt}</span><span style={{fontSize:8,color:"#888",textAlign:"center",maxWidth:70,lineHeight:1.2}}>{g.name}</span></div>};
-const SB=({s})=>{const m={key:{b:"#dcf5dc",c:"#2d7a2d"},"new-logo":{b:"#fff3d6",c:"#a07000"},"re-entry":{b:"#fde8f0",c:"#b5567a"},growth:{b:"#e3f2fd",c:"#1565c0"},upcoming:{b:"#f0e6d6",c:"#8a7060"},"in-progress":{b:"#fde8f0",c:"#d4789e"},launched:{b:"#dcf5dc",c:"#2d7a2d"},live:{b:"#dcf5dc",c:"#2d7a2d"},needed:{b:"#fff3d6",c:"#a07000"},"in-progress":{b:"#fde8f0",c:"#d4789e"}};const v=m[s]||m.key;return<span style={{fontSize:8,fontWeight:700,textTransform:"uppercase",letterSpacing:1,color:v.c,background:v.b,padding:"2px 8px",borderRadius:10}}>{s}</span>};
-const PB=({p})=>{const m={high:"#d4789e",medium:"#c9956b",low:"#aaa"};return<span style={{fontSize:8,fontWeight:600,textTransform:"uppercase",letterSpacing:0.8,color:m[p],background:`${m[p]}15`,padding:"2px 8px",borderRadius:10}}>{p}</span>};
-const HD=({h})=><span style={{display:"inline-block",width:8,height:8,borderRadius:"50%",background:h>=80?"#4caf50":h>=50?"#ff9800":"#e53935"}}/>;
-const Modal=({open,onClose,title,children})=>{if(!open)return null;return<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",backdropFilter:"blur(6px)",zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={onClose}><div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:20,padding:24,width:"100%",maxWidth:480,maxHeight:"80vh",overflow:"auto",boxShadow:"0 24px 64px rgba(0,0,0,0.12)"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><h3 style={{fontSize:16,fontWeight:600,color:"#1a1a1a",margin:0}}>{title}</h3><button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",color:"#999",padding:4}}>✕</button></div>{children}</div></div>};
+  useEffect(() => {
+    if (loaded) {
+      DB.set("v6-a", accs);
+      DB.set("v6-t", tasks);
+      DB.set("v6-l", lnch);
+      DB.set("v6-g", goals);
+      DB.set("v6-c", content);
+      DB.set("v6-ah", aiH);
+    }
+  }, [accs, tasks, lnch, goals, content, aiH, loaded]);
 
-/* ═══ APP ═══ */
-export default function App(){
-const [pg,sP]=useState("home"),[sb,sSb]=useState(true),[accs,sA]=useState(ACCTS),[tasks,sT]=useState(DEF_TASKS),[lnch,sL]=useState(DEF_LNCH),[goals,sG]=useState(DEF_GOALS),[content,sC]=useState(DEF_CONTENT),[loaded,sLoaded]=useState(false),[welcome,sW]=useState(true),[selAcc,sSA]=useState(null),[modal,sM]=useState(null),[eI,sEI]=useState(null),[form,sF]=useState({}),[aiL,sAL]=useState({}),[aiR,sAR]=useState({}),[aiChat,sAC]=useState(""),[aiH,sAH]=useState([]),[mtgAcc,sMtg]=useState(""),[mtgR,sMtgR]=useState(null),[chExp,sCE]=useState(null);
-const [taskExp,sTExp]=useState(null);
-const [showArchive,sShowArch]=useState(false);
-const [quote]=useState(Q[Math.floor(Math.random()*Q.length)]);
-const hr=new Date().getHours(),tg=hr<12?"Good morning":hr<17?"Good afternoon":"Good evening";
+  useEffect(() => {
+    const t = setTimeout(() => sW(false), 3500);
+    return () => clearTimeout(t);
+  }, []);
 
-useEffect(()=>{(async()=>{const[a,t,l,g,c,ah]=await Promise.all([DB.get("v5-a"),DB.get("v5-t"),DB.get("v5-l"),DB.get("v5-g"),DB.get("v5-c"),DB.get("v5-ah")]);if(a)sA(a);if(t)sT(t);if(l)sL(l);if(g)sG(g);if(c)sC(c);if(ah)sAH(ah);sLoaded(true)})()},[]);
-useEffect(()=>{if(loaded){DB.set("v5-a",accs);DB.set("v5-t",tasks);DB.set("v5-l",lnch);DB.set("v5-g",goals);DB.set("v5-c",content);DB.set("v5-ah",aiH)}},[accs,tasks,lnch,goals,content,aiH,loaded]);
-useEffect(()=>{const t=setTimeout(()=>sW(false),3500);return()=>clearTimeout(t)},[]);
+  const oT = tasks.filter(t => t.status !== "Complete" && !t.archived);
+  const aL = lnch.filter(l => l.st !== "launched");
 
-const oT=tasks.filter(t=>t.status!=="Complete"&&!t.archived),dT=tasks.filter(t=>t.status==="Complete"&&!t.archived),archT=tasks.filter(t=>t.archived),aL=lnch.filter(l=>l.st!=="launched");
-const markComplete=id=>sT(p=>p.map(t=>t.id===id?{...t,status:"Complete"}:t));
-const archiveTask=id=>sT(p=>p.map(t=>t.id===id?{...t,archived:true}:t));
-const unarchiveTask=id=>sT(p=>p.map(t=>t.id===id?{...t,archived:false,status:"Complete"}:t));
-const updateTaskStatus=(id,status)=>sT(p=>p.map(t=>t.id===id?{...t,status}:t));
-const updateTaskNotes=(id,notes)=>sT(p=>p.map(t=>t.id===id?{...t,notes}:t));
-const deleteTask=id=>sT(p=>p.filter(t=>t.id!==id));
-const oM=(type,item=null)=>{sM(type);sEI(item);sF(item?{...item}:{})};
-const cM=()=>{sM(null);sEI(null);sF({})};
-const svT=()=>{if(!form.text?.trim())return;if(eI)sT(p=>p.map(t=>t.id===eI.id?{...t,...form}:t));else sT(p=>[{id:`t${Date.now()}`,text:form.text,status:form.status||"Not Started",due:form.due||"",pr:form.pr||"medium",notes:form.notes||"",acc:form.acc||"",archived:false},...p]);cM()};
-const svG=()=>{if(!form.name?.trim())return;if(eI)sG(p=>p.map(g=>g.id===eI.id?{...g,...form,tgt:Number(form.tgt)||1,cur:Number(form.cur)||0}:g));else sG(p=>[...p,{id:`g${Date.now()}`,name:form.name,tgt:Number(form.tgt)||1,cur:Number(form.cur)||0,tp:form.tp||"tasks"}]);cM()};
+  // Navigation
+  const nav = [
+    { id:"home", l:"Home", e:"🏠" },
+    { id:"accounts", l:"Accounts", e:"📋" },
+    { id:"channels", l:"Channels", e:"📡" },
+    { id:"content", l:"Content", e:"📄" },
+    { id:"launches", l:"Launches", e:"🚀" },
+    { id:"tasks", l:"Tasks", e:"✅" },
+    { id:"ai", l:"AI War Room", e:"🤖" },
+    { id:"meeting-prep", l:"Meeting Prep", e:"📊" },
+    { id:"goals", l:"Goals", e:"🎯" },
+    { id:"leadership", l:"Leadership", e:"⭐" },
+    { id:"automation", l:"Automation", e:"⚡" },
+  ];
 
-const toggleContentActivation=(cId,channel)=>{sC(p=>p.map(c=>{if(c.id!==cId)return c;const act=c.activated.includes(channel)?c.activated.filter(x=>x!==channel):[...c.activated,channel];return{...c,activated:act}}))};
-
-const genAccIntel=async(id)=>{const a=accs.find(x=>x.id===id);if(!a)return;sAL(p=>({...p,[id]:true}));const r=await callAI("You are Amenitra's AI strategist at Insight Global. Generate strategic intelligence for this account. Be specific, actionable. Include competitive moves, positioning opportunities, consultant-ready meeting prep.",`Account: ${a.name}\nIndustry: ${a.ind}\nRevenue: ${a.rev}\nStatus: ${a.st}\nMarket: ${a.mp}\nPains: ${a.pains.join("; ")}\nGoals: ${a.goals.join("; ")}\n\n1. STRATEGIC SHIFTS this week\n2. COMPETITIVE INTEL\n3. CONSULTANT POSITIONING for next meeting`);sAR(p=>({...p,[id]:r}));sAL(p=>({...p,[id]:false}))};
-const genCh=async(ch)=>{sAL(p=>({...p,[`ch-${ch}`]:true}));const d=CH_STRATS[ch];const chA=accs.filter(a=>a.channels.includes(ch));const chL=lnch.filter(l=>l.ch===ch);const r=await callAI("You are Amenitra's AI strategist at Insight Global. Generate FRESH channel optimization recs. Be tactical, reference account names.",`Channel: ${ch}\nAccounts: ${chA.map(a=>`${a.name} (${a.ind}, ${a.st})`).join(", ")}\nCampaigns: ${chL.map(l=>`${l.name} for ${l.acc}`).join(", ")}\n\n5 fresh recs for this week. Reference accounts. Include one innovative idea.`);sAR(p=>({...p,[`ch-${ch}`]:r}));sAL(p=>({...p,[`ch-${ch}`]:false}))};
-const genMtg=async()=>{if(!mtgAcc)return;sAL(p=>({...p,mtg:true}));const a=accs.find(x=>x.name===mtgAcc);const r=await callAI("You are Amenitra's meeting prep assistant. Generate BRIEFING + CHECKLIST. Reference real data.",`Account: ${JSON.stringify(a)}\nLaunches: ${JSON.stringify(lnch.filter(l=>l.acc===mtgAcc))}\n\n1. BRIEFING: overview, signals, positioning, talking points\n2. CHECKLIST: pre-meeting actions`);sMtgR(r);sAL(p=>({...p,mtg:false}))};
-const askAI=async()=>{if(!aiChat.trim())return;const q=aiChat;sAC("");sAH(p=>[...p,{r:"u",t:q}]);sAL(p=>({...p,ch:true}));const r=await callAI("You are Amenitra's AI strategist at Insight Global. She manages BOA ($102M), State Farm ($2M), Capital One (re-entry), J&J ($104M), Eli Lilly (growth). Be specific.",`Accounts: ${accs.map(a=>`${a.name} (${a.st}, ${a.rev})`).join(", ")}\nTasks: ${oT.length} open\nLaunches: ${aL.length} active\n\n${q}`);sAH(p=>[...p,{r:"ai",t:r}]);sAL(p=>({...p,ch:false}))};
-
-// Styles
-const inp={width:"100%",padding:"10px 14px",borderRadius:12,border:"1px solid rgba(0,0,0,0.08)",background:"rgba(255,255,255,0.8)",fontFamily:_f,fontSize:13,color:"#1a1a1a",outline:"none",boxSizing:"border-box"};
-const btn={padding:"8px 18px",borderRadius:20,border:"none",background:"linear-gradient(135deg,#c9956b,#d4a574)",color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:_f,display:"inline-flex",alignItems:"center",gap:5};
-const btnS={padding:"6px 12px",borderRadius:12,border:"1px solid rgba(0,0,0,0.08)",background:"rgba(255,255,255,0.6)",color:"#555",fontSize:11,cursor:"pointer",fontFamily:_f,display:"inline-flex",alignItems:"center",gap:4};
-const crd={background:"rgba(255,255,255,0.6)",backdropFilter:"blur(16px)",borderRadius:16,padding:18,border:"1px solid rgba(0,0,0,0.06)",marginBottom:12};
-const tg2={display:"inline-block",fontSize:8,padding:"2px 8px",borderRadius:10,background:"rgba(0,0,0,0.04)",color:"#555",marginRight:4,marginBottom:4};
-const h2s={fontSize:20,fontWeight:600,color:"#1a1a1a",margin:"0 0 4px",fontFamily:_f};
-const h3s={fontSize:10,fontWeight:600,color:"#888",margin:"0 0 10px",textTransform:"uppercase",letterSpacing:1.8,fontFamily:_f};
-const sub={fontSize:13,color:"#555",margin:"0 0 16px",fontFamily:_f};
-const aiBtn=(l,ld,fn)=><button onClick={fn} disabled={ld} style={{...btn,fontSize:10,padding:"5px 12px",opacity:ld?0.6:1}}>✦ {ld?"Working...":l}</button>;
-const F=(l,k,type="text",opts)=><div style={{marginBottom:10}}><label style={{fontSize:10,fontWeight:600,color:"#888",display:"block",marginBottom:4,fontFamily:_f,textTransform:"uppercase",letterSpacing:1.2}}>{l}</label>{type==="select"?<select value={form[k]||""} onChange={e=>sF(p=>({...p,[k]:e.target.value}))} style={inp}>{opts.map(o=><option key={o} value={o}>{o}</option>)}</select>:type==="textarea"?<textarea value={form[k]||""} onChange={e=>sF(p=>({...p,[k]:e.target.value}))} style={{...inp,minHeight:70,resize:"vertical"}}/>:<input type={type} value={form[k]||""} onChange={e=>sF(p=>({...p,[k]:e.target.value}))} style={inp}/>}</div>;
-
-if(welcome)return<div onClick={()=>sW(false)} style={{position:"fixed",inset:0,background:"linear-gradient(160deg,#fdf0ec,#f5ddd4)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",zIndex:9999,cursor:"pointer",padding:24,textAlign:"center"}}><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/><div style={{fontSize:44,marginBottom:16}}>✨</div><h1 style={{fontSize:28,fontWeight:300,color:"#1a1a1a",fontFamily:_f,margin:"0 0 16px"}}>{tg}, Amenitra</h1><div style={{display:"flex",gap:14,flexWrap:"wrap",justifyContent:"center",marginBottom:24}}>{[{n:oT.length,l:"Tasks",cl:"#c9956b"},{n:accs.length,l:"Accounts",cl:"#d4789e"},{n:aL.length,l:"Launches",cl:"#4caf50"}].map((s,i)=><div key={i} style={{background:"rgba(255,255,255,0.6)",borderRadius:14,padding:"12px 20px"}}><div style={{fontSize:24,fontWeight:700,color:s.cl,fontFamily:_f}}>{s.n}</div><div style={{fontSize:9,color:"#888",textTransform:"uppercase",letterSpacing:1.2,fontFamily:_f}}>{s.l}</div></div>)}</div><p style={{fontSize:14,color:"#555",fontStyle:"italic",fontFamily:_f,maxWidth:400,lineHeight:1.6}}>"{quote.t}"</p><p style={{fontSize:11,color:"#888",fontFamily:_f,marginTop:4}}>— {quote.a}</p><p style={{fontSize:11,color:"#888",marginTop:28,fontFamily:_f,opacity:0.5}}>tap anywhere to enter</p></div>;
-
-const nav=[{id:"home",l:"Home",e:"🏠"},{id:"accounts",l:"Accounts",e:"📋"},{id:"channels",l:"Channels",e:"📡"},{id:"content",l:"Content",e:"📄"},{id:"launches",l:"Launches",e:"🚀"},{id:"tasks",l:"Tasks",e:"✅"},{id:"ai",l:"AI War Room",e:"🤖"},{id:"goals",l:"Goals",e:"🎯"},{id:"leadership",l:"Leadership",e:"⭐"},{id:"automation",l:"Automation",e:"⚡"}];
-
-const dk={background:"#0d1b2a",borderRadius:14,padding:16,marginBottom:10,border:"1px solid rgba(255,255,255,0.06)"};
-const dkH={fontSize:10,fontWeight:600,color:"#e8a0bf",textTransform:"uppercase",letterSpacing:1.8,margin:"0 0 10px",fontFamily:_f};
-const dkT={fontSize:12,color:"rgba(255,255,255,0.85)",fontFamily:_f,lineHeight:1.7};
-
-/* ═══ PAGES ═══ */
-const rHome=()=><>
-  <div style={{...crd,textAlign:"center",padding:22,background:"linear-gradient(135deg,rgba(255,255,255,0.7),rgba(232,160,191,0.04))"}}><p style={{fontSize:10,color:"#888",textTransform:"uppercase",letterSpacing:2.5,margin:"0 0 4px",fontFamily:_f}}>{tg}, Amenitra</p><p style={{fontSize:14,color:"#555",fontStyle:"italic",margin:"0 0 2px",fontFamily:_f}}>"{quote.t}"</p><p style={{fontSize:11,color:"#888",margin:0,fontFamily:_f}}>— {quote.a}</p></div>
-  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:12}}>{[{n:oT.length,l:"Tasks",cl:"#c9956b"},{n:aL.length,l:"Launches",cl:"#d4789e"},{n:accs.length,l:"Accounts",cl:"#4caf50"},{n:dT.length,l:"Done",cl:"#555"}].map((s,i)=><div key={i} style={{...crd,textAlign:"center",padding:12,marginBottom:0}}><div style={{fontSize:22,fontWeight:700,color:s.cl,fontFamily:_f}}>{s.n}</div><div style={{fontSize:8,color:"#888",textTransform:"uppercase",letterSpacing:1.2,fontFamily:_f}}>{s.l}</div></div>)}</div>
-  <div style={crd}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}><h3 style={{...h3s,margin:0}}>Goals</h3><button onClick={()=>oM("addGoal")} style={btnS}>+ Add</button></div><div style={{display:"flex",justifyContent:"space-around",flexWrap:"wrap",gap:6}}>{goals.slice(0,5).map(g=><GoalRing key={g.id} g={g}/>)}</div></div>
-  <div style={crd}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}><h3 style={{...h3s,margin:0}}>Priorities</h3><button onClick={()=>oM("addTask")} style={btnS}>+ Add</button></div>{oT.filter(t=>t.pr==="high").concat(oT.filter(t=>t.pr!=="high")).slice(0,5).map(t=><div key={t.id} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:"1px solid rgba(0,0,0,0.04)"}}><div onClick={()=>markComplete(t.id)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${t.status==="In Progress"?"#c9956b":"#ddd"}`,background:t.status==="In Progress"?"rgba(201,149,107,0.1)":"transparent",cursor:"pointer",flexShrink:0}}/><span style={{flex:1,fontSize:12,color:"#1a1a1a",fontFamily:_f}}>{t.text}</span><PB p={t.pr}/>{t.acc&&<span style={{fontSize:8,color:"#888",fontFamily:_f}}>{t.acc.split(" ")[0]}</span>}</div>)}</div>
-  <h3 style={h3s}>Accounts</h3>
-  <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:8}}>{accs.map(a=><div key={a.id} onClick={()=>{sSA(a.id);sP("acc-detail")}} style={{...crd,cursor:"pointer",padding:14,marginBottom:0}}><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}><HD h={a.hp}/><span style={{fontSize:13,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{a.name}</span></div><div style={{fontSize:10,color:"#888",fontFamily:_f}}>{a.ind} · {a.rev}</div><div style={{marginTop:4}}><SB s={a.st}/></div></div>)}</div>
-</>;
-
-const rAccs=()=><><h2 style={h2s}>Accounts Hub</h2><p style={sub}>Click any account for strategic intelligence</p>{["Financial Services","Life Sciences"].map(ind=><div key={ind}><h3 style={{...h3s,marginTop:14}}>{ind}</h3>{accs.filter(a=>a.ind===ind).map(a=><div key={a.id} onClick={()=>{sSA(a.id);sP("acc-detail")}} style={{...crd,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}><div><div style={{display:"flex",alignItems:"center",gap:6}}><HD h={a.hp}/><span style={{fontSize:14,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{a.name}</span><SB s={a.st}/></div><div style={{fontSize:11,color:"#888",fontFamily:_f,marginTop:3}}>{a.rev} · Last: {a.lt}</div></div><span style={{color:"#888"}}>›</span></div>)}</div>)}</>;
-
-const rAccDetail=()=>{const a=accs.find(x=>x.id===selAcc);if(!a)return<p>Not found</p>;const al=lnch.filter(l=>l.acc===a.name);
-return<><button onClick={()=>sP("accounts")} style={{...btnS,marginBottom:12}}>← Back</button>
-  <div style={{...dk,display:"flex",justifyContent:"space-between",alignItems:"center",padding:20}}><div style={{display:"flex",alignItems:"center",gap:14}}><div style={{width:44,height:44,borderRadius:12,background:"rgba(255,255,255,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,fontWeight:700,color:"#fff",fontFamily:_f}}>{a.ini}</div><div><div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:20,fontWeight:600,color:"#fff",fontFamily:_f}}>{a.name}</span><SB s={a.st}/></div><div style={{fontSize:11,color:"rgba(255,255,255,0.5)",fontFamily:_f}}>{a.ind} · {a.rev}</div></div></div>{aiBtn("Prep for call",aiL[a.id],()=>genAccIntel(a.id))}</div>
-  <div style={dk}><h4 style={dkH}>✦ Market Position</h4><p style={dkT}>{a.mp}</p></div>
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-    <div style={dk}><h4 style={{...dkH,color:"#daa520"}}>⚡ Signals</h4>{a.signals.map((s,i)=><div key={i} style={{display:"flex",gap:8,padding:"5px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{color:"#daa520",fontSize:10}}>●</span><span style={dkT}>{s}</span></div>)}</div>
-    <div style={dk}><h4 style={{...dkH,color:"#e53935"}}>🔴 Pain Hierarchy</h4>{a.pains.map((p,i)=><div key={i} style={{display:"flex",gap:8,padding:"6px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{background:"rgba(229,57,53,0.15)",color:"#e53935",fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:8,flexShrink:0}}>#{i+1}</span><span style={dkT}>{p}</span></div>)}</div>
-  </div>
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}><div style={crd}><h3 style={h3s}>Goals</h3>{a.goals.map((g,i)=><div key={i} style={{fontSize:12,color:"#1a1a1a",fontFamily:_f,padding:"3px 0"}}>✓ {g}</div>)}</div><div style={crd}><h3 style={h3s}>Target Audience</h3>{a.audience.map((t,i)=><div key={i} style={{fontSize:12,color:"#1a1a1a",fontFamily:_f,padding:"3px 0"}}>• {t}</div>)}</div></div>
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}><div style={crd}><h3 style={h3s}>Services</h3>{a.services.map((s,i)=><div key={i} style={{fontSize:12,color:"#1a1a1a",fontFamily:_f,padding:"3px 0"}}>• {s}</div>)}</div><div style={crd}><h3 style={h3s}>Tactics</h3>{a.tactics.map((t,i)=><div key={i} style={{fontSize:12,color:"#1a1a1a",fontFamily:_f,padding:"3px 0"}}>• {t}</div>)}</div></div>
-  {al.length>0&&<div style={crd}><h3 style={h3s}>Active Launches</h3>{al.map(l=><div key={l.id} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid rgba(0,0,0,0.04)"}}><div><div style={{fontSize:12,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{l.name}</div><div style={{fontSize:10,color:"#888",fontFamily:_f}}>{l.ch} · {l.dt}</div></div><SB s={l.st}/></div>)}</div>}
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}><div style={crd}><h3 style={h3s}>Stakeholders</h3>{a.smes.map((s,i)=><span key={i} style={{...tg2,padding:"4px 10px"}}>{s}</span>)}</div><div style={crd}><h3 style={h3s}>Channels</h3>{a.channels.map((c,i)=><span key={i} style={{...tg2,padding:"4px 10px"}}>{c}</span>)}</div></div>
-  <div style={crd}><h3 style={h3s}>Strategy (Editable)</h3><textarea value={a.strat} onChange={e=>sA(p=>p.map(x=>x.id===a.id?{...x,strat:e.target.value}:x))} placeholder="Your strategy..." style={{...inp,minHeight:80,resize:"vertical"}}/></div>
-  <div style={crd}><h3 style={h3s}>Notes (Editable)</h3><textarea value={a.notes} onChange={e=>sA(p=>p.map(x=>x.id===a.id?{...x,notes:e.target.value}:x))} placeholder="Meeting notes, intel..." style={{...inp,minHeight:80,resize:"vertical"}}/></div>
-  {aiR[a.id]&&<div style={{...dk,background:"#0a1628"}}><h4 style={dkH}>AI Strategic Intelligence</h4><div style={{...dkT,whiteSpace:"pre-wrap"}}>{aiR[a.id]}</div></div>}
-</>};
-
-const rChannels=()=><><h2 style={h2s}>Channel Command</h2><p style={sub}>Strategy, optimizations, news, and account plays — click to expand</p>
-  {CH.map(ch=>{const d=CH_STRATS[ch];if(!d)return null;const chA=accs.filter(a=>a.channels.includes(ch));const chL=lnch.filter(l=>l.ch===ch);const ex=chExp===ch;
-  return<div key={ch} style={{...crd,padding:0,overflow:"hidden"}}>
-    <div onClick={()=>sCE(ex?null:ch)} style={{padding:"14px 18px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}><div style={{display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:20}}>{d.e}</span><div><div style={{fontSize:14,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{ch}</div><div style={{fontSize:11,color:"#888",fontFamily:_f}}>{chL.length} campaigns · {chA.length} accounts</div></div></div><div style={{display:"flex",alignItems:"center",gap:6}}>{chA.slice(0,3).map(a=><span key={a.id} style={{...tg2,margin:0}}>{a.name}</span>)}<span style={{transform:ex?"rotate(90deg)":"",transition:"transform 0.2s",color:"#888"}}>›</span></div></div>
-    {ex&&<div style={{padding:"0 18px 18px"}}>
-      <div style={{background:"rgba(0,0,0,0.02)",borderRadius:12,padding:14,marginBottom:10}}><h4 style={{...h3s,margin:"0 0 6px",color:"#c9956b"}}>Strategy</h4><p style={{fontSize:12,color:"#1a1a1a",fontFamily:_f,lineHeight:1.6,margin:0}}>{d.s}</p></div>
-      <div style={{marginBottom:10,display:"flex",gap:8,alignItems:"center"}}>{aiBtn("Fresh AI Recs",aiL[`ch-${ch}`],()=>genCh(ch))}<span style={{fontSize:10,color:"#888"}}>Analyzes your accounts + campaigns</span></div>
-      {aiR[`ch-${ch}`]&&<div style={{background:"linear-gradient(135deg,rgba(201,149,107,0.06),rgba(212,120,158,0.04))",borderRadius:12,padding:14,marginBottom:10,fontSize:12,color:"#1a1a1a",fontFamily:_f,lineHeight:1.7,whiteSpace:"pre-wrap",border:"1px solid rgba(201,149,107,0.12)"}}><h4 style={{...h3s,margin:"0 0 8px",color:"#d4789e"}}>AI Recs</h4>{aiR[`ch-${ch}`]}</div>}
-      <h4 style={{...h3s,margin:"0 0 8px"}}>Optimizations</h4>{d.opts.map((o,i)=><div key={i} style={{display:"flex",gap:8,padding:"4px 0",borderBottom:"1px solid rgba(0,0,0,0.03)"}}><span style={{color:"#c9956b",fontSize:10,fontWeight:700}}>→</span><span style={{fontSize:11,color:"#1a1a1a",fontFamily:_f,lineHeight:1.5}}>{o}</span></div>)}
-      <h4 style={{...h3s,margin:"12px 0 8px",color:"#1565c0"}}>📰 News & Developments</h4>{d.news.map((n,i)=><div key={i} style={{display:"flex",gap:8,padding:"4px 0",borderBottom:"1px solid rgba(0,0,0,0.03)"}}><span style={{color:"#1565c0",fontSize:10}}>●</span><span style={{fontSize:11,color:"#1a1a1a",fontFamily:_f,lineHeight:1.5}}>{n}</span></div>)}
-      <h4 style={{...h3s,margin:"12px 0 8px",color:"#d4789e"}}>Account Plays</h4>{d.plays.map((p,i)=><div key={i} style={{fontSize:11,color:"#1a1a1a",fontFamily:_f,lineHeight:1.5,padding:"4px 0",borderBottom:"1px solid rgba(0,0,0,0.03)"}}>{p}</div>)}
-      {chL.length>0&&<><h4 style={{...h3s,margin:"12px 0 8px"}}>Active Campaigns</h4>{chL.map(l=><div key={l.id} style={{display:"flex",justifyContent:"space-between",padding:"4px 0"}}><div><span style={{fontSize:12,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{l.name}</span><span style={{fontSize:10,color:"#888",fontFamily:_f,marginLeft:8}}>{l.acc}</span></div><SB s={l.st}/></div>)}</>}
-    </div>}
-  </div>})}</>;
-
-const rContent=()=><><h2 style={h2s}>Content & Activation</h2><p style={sub}>Track all content and where it's been activated across channels</p>
-  {["live","in-progress","needed"].map(status=><div key={status}><h3 style={{...h3s,marginTop:14}}>{status==="in-progress"?"In Progress":status.charAt(0).toUpperCase()+status.slice(1)} ({content.filter(c=>c.status===status).length})</h3>
-    {content.filter(c=>c.status===status).map(c=><div key={c.id} style={crd}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
-        <div><div style={{fontSize:13,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{c.title}</div><div style={{fontSize:10,color:"#888",fontFamily:_f,marginTop:2}}>{c.type} · {c.ind} · {c.ch}</div></div>
-        <SB s={c.status}/>
+  // Welcome Screen
+  if (welcome) return (
+    <div onClick={() => sW(false)} style={{position:"fixed",inset:0,background:"linear-gradient(160deg,#fdf0ec,#f5ddd4)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",zIndex:9999,cursor:"pointer",padding:24,textAlign:"center"}}>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+      <div style={{fontSize:44,marginBottom:16}}>✨</div>
+      <h1 style={{fontSize:28,fontWeight:300,color:"#1a1a1a",fontFamily:_f,margin:"0 0 16px"}}>{tg}, Amenitra</h1>
+      <div style={{display:"flex",gap:14,flexWrap:"wrap",justifyContent:"center",marginBottom:24}}>
+        {[{n:oT.length,l:"Tasks",cl:"#c9956b"},{n:accs.length,l:"Accounts",cl:"#d4789e"},{n:aL.length,l:"Launches",cl:"#4caf50"}].map((s,i) => (
+          <div key={i} style={{background:"rgba(255,255,255,0.6)",borderRadius:14,padding:"12px 20px"}}>
+            <div style={{fontSize:24,fontWeight:700,color:s.cl,fontFamily:_f}}>{s.n}</div>
+            <div style={{fontSize:9,color:"#888",textTransform:"uppercase",letterSpacing:1.2,fontFamily:_f}}>{s.l}</div>
+          </div>
+        ))}
       </div>
-      <h4 style={{...h3s,margin:"0 0 6px",fontSize:9}}>Activation — click to toggle channels</h4>
-      <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
-        {CH.map(ch=>{const active=c.activated.includes(ch);return<button key={ch} onClick={()=>toggleContentActivation(c.id,ch)} style={{fontSize:9,padding:"3px 10px",borderRadius:10,border:`1px solid ${active?"#4caf50":"rgba(0,0,0,0.08)"}`,background:active?"rgba(76,175,80,0.1)":"rgba(0,0,0,0.02)",color:active?"#2d7a2d":"#888",cursor:"pointer",fontFamily:_f,fontWeight:active?600:400}}>{active?"✓ ":""}{ch}</button>})}
-      </div>
-      {c.activated.length>0&&<div style={{fontSize:10,color:"#4caf50",fontFamily:_f,marginTop:6}}>Activated on {c.activated.length}/{CH.length} channels</div>}
-      {c.activated.length===0&&c.status==="live"&&<div style={{fontSize:10,color:"#e53935",fontFamily:_f,marginTop:6}}>⚠ Not yet activated beyond original channel</div>}
-    </div>)}
-  </div>)}
-</>;
-
-const rLaunches=()=><><h2 style={h2s}>Launch Tracker</h2><p style={sub}>All campaigns across accounts</p>{["upcoming","in-progress","launched"].map(st=><div key={st} style={{marginTop:12}}><h3 style={h3s}>{st==="in-progress"?"In Progress":st.charAt(0).toUpperCase()+st.slice(1)}</h3>{lnch.filter(l=>l.st===st).map(l=><div key={l.id} style={{...crd,display:"flex",justifyContent:"space-between",alignItems:"center"}}><div><div style={{fontSize:13,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{l.name}</div><div style={{fontSize:11,color:"#888",fontFamily:_f}}>{l.acc} · {l.ch} · {l.dt}</div></div><SB s={st}/></div>)}{lnch.filter(l=>l.st===st).length===0&&<p style={{fontSize:11,color:"#888",fontFamily:_f}}>None</p>}</div>)}</>;
-
-const stColors={"Not Started":"#888","In Progress":"#c9956b","Blocked":"#e53935","Complete":"#4caf50"};
-const rTasks=()=><><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}><h2 style={h2s}>Tasks & Reminders</h2><button onClick={()=>oM("addTask")} style={btn}>+ Add Task</button></div>
-  <div style={{display:"flex",gap:8,marginBottom:14}}>{TASK_STATUSES.map(s=>{const c=tasks.filter(t=>t.status===s&&!t.archived).length;return<div key={s} style={{...crd,flex:1,textAlign:"center",padding:10,marginBottom:0,borderLeft:`3px solid ${stColors[s]}`}}><div style={{fontSize:18,fontWeight:700,color:stColors[s],fontFamily:_f}}>{c}</div><div style={{fontSize:8,color:"#888",textTransform:"uppercase",letterSpacing:1,fontFamily:_f}}>{s}</div></div>})}</div>
-
-  {/* Active Tasks by Status */}
-  {["In Progress","Not Started","Blocked"].map(status=>{const sts=oT.filter(t=>t.status===status);if(!sts.length)return null;return<div key={status} style={{marginBottom:16}}>
-    <h3 style={{...h3s,color:stColors[status]}}>{status} ({sts.length})</h3>
-    {sts.map(t=><div key={t.id} style={{...crd,padding:0,overflow:"hidden",borderLeft:`3px solid ${stColors[t.status]}`}}>
-      <div onClick={()=>sTExp(taskExp===t.id?null:t.id)} style={{padding:"12px 16px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-        <div style={{display:"flex",alignItems:"center",gap:10,flex:1}}>
-          <span style={{flex:1,fontSize:13,fontWeight:500,color:"#1a1a1a",fontFamily:_f}}>{t.text}</span>
-        </div>
-        <div style={{display:"flex",alignItems:"center",gap:6}}>
-          <PB p={t.pr}/>
-          {t.acc&&<span style={{...tg2,margin:0,fontSize:8}}>{t.acc.split(" ")[0]}</span>}
-          {t.due&&<span style={{fontSize:10,color:"#888",fontFamily:_f}}>{t.due}</span>}
-          <span style={{transform:taskExp===t.id?"rotate(90deg)":"",transition:"transform 0.2s",color:"#888"}}>›</span>
-        </div>
-      </div>
-      {taskExp===t.id&&<div style={{padding:"0 16px 14px",borderTop:"1px solid rgba(0,0,0,0.04)"}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginTop:10,marginBottom:10}}>
-          <div><label style={{fontSize:9,color:"#888",textTransform:"uppercase",letterSpacing:1,fontFamily:_f,display:"block",marginBottom:4}}>Status</label><select value={t.status} onChange={e=>updateTaskStatus(t.id,e.target.value)} style={{...inp,fontSize:12,padding:"8px 10px"}}>{TASK_STATUSES.map(s=><option key={s} value={s}>{s}</option>)}</select></div>
-          <div><label style={{fontSize:9,color:"#888",textTransform:"uppercase",letterSpacing:1,fontFamily:_f,display:"block",marginBottom:4}}>Priority</label><select value={t.pr} onChange={e=>sT(p=>p.map(x=>x.id===t.id?{...x,pr:e.target.value}:x))} style={{...inp,fontSize:12,padding:"8px 10px"}}>{["high","medium","low"].map(p=><option key={p} value={p}>{p}</option>)}</select></div>
-          <div><label style={{fontSize:9,color:"#888",textTransform:"uppercase",letterSpacing:1,fontFamily:_f,display:"block",marginBottom:4}}>Due Date</label><input type="date" value={t.due||""} onChange={e=>sT(p=>p.map(x=>x.id===t.id?{...x,due:e.target.value}:x))} style={{...inp,fontSize:12,padding:"8px 10px"}}/></div>
-        </div>
-        <div style={{marginBottom:10}}><label style={{fontSize:9,color:"#888",textTransform:"uppercase",letterSpacing:1,fontFamily:_f,display:"block",marginBottom:4}}>Account</label><select value={t.acc||""} onChange={e=>sT(p=>p.map(x=>x.id===t.id?{...x,acc:e.target.value}:x))} style={{...inp,fontSize:12,padding:"8px 10px"}}><option value="">None</option>{accs.map(a=><option key={a.id} value={a.name}>{a.name}</option>)}</select></div>
-        <div style={{marginBottom:10}}><label style={{fontSize:9,color:"#888",textTransform:"uppercase",letterSpacing:1,fontFamily:_f,display:"block",marginBottom:4}}>Notes</label><textarea value={t.notes||""} onChange={e=>updateTaskNotes(t.id,e.target.value)} placeholder="Add notes, context, links..." style={{...inp,minHeight:60,resize:"vertical",fontSize:12}}/></div>
-        <div style={{display:"flex",gap:6}}>
-          <button onClick={()=>oM("addTask",t)} style={btnS}>✎ Edit Title</button>
-          <button onClick={()=>{markComplete(t.id);sTExp(null)}} style={{...btn,fontSize:10,padding:"5px 12px",background:"linear-gradient(135deg,#4caf50,#66bb6a)"}}>✓ Complete</button>
-          <button onClick={()=>deleteTask(t.id)} style={{...btnS,color:"#e53935"}}>🗑 Delete</button>
-        </div>
-      </div>}
-    </div>)}
-  </div>})}
-
-  {/* Recently Completed */}
-  {dT.length>0&&<div style={{marginBottom:16}}><h3 style={{...h3s,color:"#4caf50"}}>Complete ({dT.length})</h3>
-    {dT.map(t=><div key={t.id} style={{...crd,display:"flex",justifyContent:"space-between",alignItems:"center",opacity:0.7,borderLeft:"3px solid #4caf50"}}>
-      <div><div style={{fontSize:12,color:"#1a1a1a",fontFamily:_f,textDecoration:"line-through"}}>{t.text}</div>{t.acc&&<div style={{fontSize:10,color:"#888",fontFamily:_f}}>{t.acc} · {t.due}</div>}</div>
-      <div style={{display:"flex",gap:4}}>
-        <button onClick={()=>archiveTask(t.id)} style={{...btnS,fontSize:10}}>Archive</button>
-        <button onClick={()=>updateTaskStatus(t.id,"In Progress")} style={{...btnS,fontSize:10}}>Reopen</button>
-      </div>
-    </div>)}
-  </div>}
-
-  {/* Archive */}
-  <div style={{marginTop:8}}>
-    <button onClick={()=>sShowArch(p=>!p)} style={{...btnS,marginBottom:8}}>{showArchive?"Hide":"Show"} Archive ({archT.length})</button>
-    {showArchive&&archT.map(t=><div key={t.id} style={{...crd,opacity:0.4,borderLeft:"3px solid #ddd",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-      <div><div style={{fontSize:12,color:"#1a1a1a",fontFamily:_f,textDecoration:"line-through"}}>{t.text}</div><div style={{fontSize:10,color:"#888",fontFamily:_f}}>{t.acc||"No account"} · {t.due} · {t.pr}</div>{t.notes&&<div style={{fontSize:10,color:"#888",fontFamily:_f,fontStyle:"italic",marginTop:2}}>{t.notes.substring(0,80)}{t.notes.length>80?"...":""}</div>}</div>
-      <div style={{display:"flex",gap:4}}><button onClick={()=>unarchiveTask(t.id)} style={{...btnS,fontSize:10}}>Restore</button><button onClick={()=>deleteTask(t.id)} style={{...btnS,fontSize:10,color:"#e53935"}}>Delete</button></div>
-    </div>)}
-  </div>
-</>;
-
-const rAI=()=><><h2 style={h2s}>AI War Room</h2><p style={sub}>Meeting prep, strategist, and agents</p>
-  <div style={crd}><h3 style={h3s}>Meeting Prep</h3><div style={{display:"flex",gap:8}}><select value={mtgAcc} onChange={e=>sMtg(e.target.value)} style={{...inp,flex:1}}><option value="">Select account...</option>{accs.map(a=><option key={a.id} value={a.name}>{a.name}</option>)}</select>{aiBtn("Generate",aiL.mtg,genMtg)}</div>{mtgR&&<div style={{marginTop:12,padding:14,background:"rgba(0,0,0,0.02)",borderRadius:12,fontSize:12,color:"#1a1a1a",lineHeight:1.7,fontFamily:_f,whiteSpace:"pre-wrap"}}>{mtgR}</div>}</div>
-  <div style={crd}><h3 style={h3s}>Ask AI</h3><div style={{display:"flex",gap:8}}><input value={aiChat} onChange={e=>sAC(e.target.value)} onKeyDown={e=>e.key==="Enter"&&askAI()} placeholder="Ask about strategy, accounts..." style={{...inp,flex:1}}/><button onClick={askAI} disabled={aiL.ch} style={{...btn,opacity:aiL.ch?0.6:1}}>{aiL.ch?"...":"Ask"}</button></div><div style={{marginTop:10,maxHeight:300,overflow:"auto"}}>{aiH.map((m,i)=><div key={i} style={{padding:10,marginBottom:6,borderRadius:12,background:m.r==="u"?"rgba(0,0,0,0.02)":"rgba(212,120,158,0.04)",fontSize:12,color:"#1a1a1a",fontFamily:_f,lineHeight:1.6,whiteSpace:"pre-wrap"}}><span style={{fontSize:9,fontWeight:700,textTransform:"uppercase",letterSpacing:1,color:m.r==="u"?"#c9956b":"#d4789e",marginRight:6}}>{m.r==="u"?"You":"AI"}</span>{m.t}</div>)}</div></div>
-  <h3 style={h3s}>Cowork Agents</h3><div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:8}}>{[{n:"Outlook",d:"Emails → action items"},{n:"Teams",d:"Chat context"},{n:"Airtable",d:"Two-way sync"},{n:"HubSpot",d:"CRM deals"},{n:"Competitor Intel",d:"Moves by channel"}].map((a,i)=><div key={i} style={{...crd,padding:14,marginBottom:0}}><div style={{fontSize:12,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>🤖 {a.n}</div><div style={{fontSize:10,color:"#888",fontFamily:_f}}>{a.d}</div><span style={{...tg2,marginTop:6,display:"inline-block",background:"rgba(76,175,80,0.1)",color:"#4caf50"}}>Ready</span></div>)}</div></>;
-
-const rGoals=()=><><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}><h2 style={h2s}>Goals & Wins</h2><button onClick={()=>oM("addGoal")} style={btn}>+ Add</button></div><p style={sub}>Auto-tracked from your work</p><div style={crd}><div style={{display:"flex",justifyContent:"space-around",flexWrap:"wrap",gap:10}}>{goals.map(g=><GoalRing key={g.id} g={g} sz={78}/>)}</div></div>{goals.map(g=><div key={g.id} style={{...crd,display:"flex",justifyContent:"space-between",alignItems:"center"}}><div><div style={{fontSize:13,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{g.name}</div><div style={{fontSize:11,color:"#888",fontFamily:_f}}>{g.cur}/{g.tgt}</div></div><button onClick={()=>oM("addGoal",g)} style={{...btnS,padding:"4px 8px"}}>✎</button></div>)}<div style={crd}><h3 style={h3s}>Win Journal</h3>{[...dT,...archT].map(t=><div key={t.id} style={{display:"flex",alignItems:"center",gap:6,padding:"4px 0",borderBottom:"1px solid rgba(0,0,0,0.04)"}}><span style={{color:"#4caf50"}}>✓</span><span style={{flex:1,fontSize:11,color:"#1a1a1a",fontFamily:_f}}>{t.text}</span>{t.acc&&<span style={{fontSize:9,color:"#888",fontFamily:_f}}>{t.acc.split(" ")[0]}</span>}</div>)}{lnch.filter(l=>l.st==="launched").map(l=><div key={l.id} style={{display:"flex",alignItems:"center",gap:6,padding:"4px 0"}}><span>🚀</span><span style={{flex:1,fontSize:11,color:"#1a1a1a",fontFamily:_f}}>Launched: {l.name}</span></div>)}</div></>;
-
-const rLead=()=><><h2 style={h2s}>Leadership Corner</h2><p style={sub}>Coaching and follow-through</p><div style={{...crd,background:"linear-gradient(135deg,rgba(255,255,255,0.8),rgba(218,165,32,0.03))"}}><h3 style={h3s}>Daily Prompt</h3><p style={{fontSize:14,color:"#1a1a1a",lineHeight:1.6,fontStyle:"italic",fontFamily:_f,margin:0}}>"What's one thing you can do today that will make next month's stakeholder meeting easier?"</p></div><div style={crd}><h3 style={h3s}>Post-Launch Follow-Ups</h3>{lnch.filter(l=>l.st==="launched").map(l=><div key={l.id} style={{padding:"6px 0",borderBottom:"1px solid rgba(0,0,0,0.04)"}}><div style={{fontSize:12,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{l.name}</div><div style={{fontSize:10,color:"#888",fontFamily:_f}}>{l.acc} · {l.dt}</div><div style={{marginTop:4,display:"flex",gap:4}}>{["1-Week","2-Week","30-Day"].map(p=><span key={p} style={tg2}>☐ {p}</span>)}</div></div>)}</div></>;
-
-const rAuto=()=><><h2 style={h2s}>Automation</h2><p style={sub}>Scan tools via Cowork</p><div style={{...crd,background:"linear-gradient(135deg,rgba(255,255,255,0.8),rgba(76,175,80,0.03))"}}><h3 style={h3s}>Weekly Monday Refresh</h3><p style={{fontSize:12,color:"#555",fontFamily:_f}}>Auto-refreshes competitor intel + positioning for every account Mondays at 7am EST.</p></div><div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:8}}>{[{n:"Outlook",d:"Emails → action items",e:"📧"},{n:"Teams",d:"Chat decisions",e:"💬"},{n:"Airtable",d:"Two-way sync",e:"📊"},{n:"HubSpot",d:"CRM deals",e:"🔗"}].map((s,i)=><div key={i} style={{...crd,padding:16,marginBottom:0}}><div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:20}}>{s.e}</span><div><div style={{fontSize:13,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>{s.n}</div><div style={{fontSize:10,color:"#888",fontFamily:_f}}>{s.d}</div></div></div><span style={{...tg2,marginTop:8,display:"inline-block",background:"rgba(76,175,80,0.1)",color:"#4caf50"}}>Ready for Cowork</span></div>)}</div></>;
-
-const pages={home:rHome,accounts:rAccs,"acc-detail":rAccDetail,channels:rChannels,content:rContent,launches:rLaunches,tasks:rTasks,ai:rAI,goals:rGoals,leadership:rLead,automation:rAuto};
-
-return<div style={{fontFamily:_f,background:"linear-gradient(160deg,#fdf0ec 0%,#fce8e4 30%,#f9e2de 60%,#fdf0ec 100%)",minHeight:"100vh",display:"flex"}}>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <button onClick={()=>sSb(p=>!p)} style={{position:"fixed",top:12,left:sb?218:12,zIndex:1500,background:"rgba(255,255,255,0.8)",backdropFilter:"blur(12px)",border:"1px solid rgba(0,0,0,0.06)",borderRadius:10,padding:"7px 9px",cursor:"pointer",color:"#1a1a1a",transition:"left 0.3s"}}>{sb?"✕":"☰"}</button>
-  <aside style={{width:sb?210:0,minHeight:"100vh",background:"rgba(255,255,255,0.6)",backdropFilter:"blur(20px)",borderRight:"1px solid rgba(0,0,0,0.06)",transition:"width 0.3s",overflow:"hidden",position:"sticky",top:0,height:"100vh",flexShrink:0,zIndex:1000,display:"flex",flexDirection:"column"}}>
-    <div style={{padding:sb?"50px 10px 14px":"50px 0 14px",opacity:sb?1:0,transition:"opacity 0.2s",flex:1}}>
-      <div style={{marginBottom:16,paddingLeft:8}}><div style={{fontSize:15,fontWeight:600,color:"#1a1a1a"}}>Amenitra's</div><div style={{fontSize:9,color:"#d4789e",fontWeight:500,letterSpacing:2,textTransform:"uppercase"}}>Command Center</div></div>
-      {nav.map(n=><button key={n.id} onClick={()=>sP(n.id)} style={{display:"flex",alignItems:"center",gap:8,width:"100%",padding:"8px 10px",borderRadius:10,border:"none",cursor:"pointer",marginBottom:1,background:pg===n.id?"rgba(201,149,107,0.12)":"transparent",color:pg===n.id?"#1a1a1a":"#555",fontWeight:pg===n.id?600:400,fontSize:12,fontFamily:_f,textAlign:"left"}}><span style={{fontSize:14}}>{n.e}</span> {n.l}</button>)}
+      <p style={{fontSize:14,color:"#555",fontStyle:"italic",fontFamily:_f,maxWidth:400,lineHeight:1.6}}>"{quote.t}"</p>
+      <p style={{fontSize:11,color:"#888",fontFamily:_f,marginTop:4}}>— {quote.a}</p>
+      <p style={{fontSize:11,color:"#888",marginTop:28,fontFamily:_f,opacity:0.5}}>tap anywhere to enter</p>
     </div>
-    <div style={{padding:sb?"10px 14px":0,borderTop:"1px solid rgba(0,0,0,0.06)",opacity:sb?1:0}}><div style={{fontSize:8,color:"#888",textTransform:"uppercase",letterSpacing:1,lineHeight:1.6}}>IG · FS · Life Sciences</div></div>
-  </aside>
-  <main style={{flex:1,padding:"16px 20px",maxWidth:820,margin:"0 auto",width:"100%"}}><div style={{paddingTop:36}}>{(pages[pg]||rHome)()}</div></main>
-  <Modal open={modal==="addTask"} onClose={cM} title={eI?"Edit Task":"Add Task"}>{F("Task","text")}{F("Status","status","select",TASK_STATUSES)}{F("Priority","pr","select",["high","medium","low"])}{F("Due Date","due","date")}{F("Account","acc","select",["",  ...accs.map(a=>a.name)])}{F("Notes","notes","textarea")}<button onClick={svT} style={{...btn,width:"100%",justifyContent:"center",marginTop:4}}>{eI?"Save":"Add Task"}</button></Modal>
-  <Modal open={modal==="addGoal"} onClose={cM} title={eI?"Edit Goal":"Add Goal"}>{F("Name","name")}{F("Target","tgt","number")}{F("Current","cur","number")}{F("Type","tp","select",["accounts","launches","tasks","strategy"])}<button onClick={svG} style={{...btn,width:"100%",justifyContent:"center",marginTop:4}}>{eI?"Save":"Add"}</button></Modal>
-</div>}
+  );
+
+  // Shared props for all pages
+  const pageProps = { accs, sA, tasks, sT, lnch, sL, goals, sG, content, sC, aiH, sAH, selAcc, sSA, setPg: sP };
+
+  // Page routing
+  const renderPage = () => {
+    switch(pg) {
+      case "home": return <Home {...pageProps} quote={quote} tg={tg} />;
+      case "accounts": return <Accounts {...pageProps} />;
+      case "acc-detail": return <AccountDetail {...pageProps} />;
+      case "channels": return <Channels {...pageProps} />;
+      case "content": return <ContentPage {...pageProps} />;
+      case "launches": return <Launches {...pageProps} />;
+      case "tasks": return <Tasks {...pageProps} />;
+      case "ai": return <AIWarRoom {...pageProps} />;
+      case "meeting-prep": return <MeetingPrep {...pageProps} />;
+      case "goals": return <Goals {...pageProps} />;
+      case "leadership": return <Leadership {...pageProps} />;
+      case "automation": return <Automation {...pageProps} />;
+      default: return <Home {...pageProps} quote={quote} tg={tg} />;
+    }
+  };
+
+  return (
+    <div style={{fontFamily:_f,background:"linear-gradient(160deg,#fdf0ec 0%,#fce8e4 30%,#f9e2de 60%,#fdf0ec 100%)",minHeight:"100vh",display:"flex"}}>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+      {/* Sidebar Toggle */}
+      <button onClick={() => sSb(p => !p)} style={{position:"fixed",top:12,left:sb?218:12,zIndex:1500,background:"rgba(255,255,255,0.8)",backdropFilter:"blur(12px)",border:"1px solid rgba(0,0,0,0.06)",borderRadius:10,padding:"7px 9px",cursor:"pointer",color:"#1a1a1a",transition:"left 0.3s"}}>
+        {sb ? "✕" : "☰"}
+      </button>
+
+      {/* Sidebar */}
+      <aside style={{width:sb?210:0,minHeight:"100vh",background:"rgba(255,255,255,0.6)",backdropFilter:"blur(20px)",borderRight:"1px solid rgba(0,0,0,0.06)",transition:"width 0.3s",overflow:"hidden",position:"sticky",top:0,height:"100vh",flexShrink:0,zIndex:1000,display:"flex",flexDirection:"column"}}>
+        <div style={{padding:sb?"50px 10px 14px":"50px 0 14px",opacity:sb?1:0,transition:"opacity 0.2s",flex:1}}>
+          <div style={{marginBottom:16,paddingLeft:8}}>
+            <div style={{fontSize:15,fontWeight:600,color:"#1a1a1a",fontFamily:_f}}>Amenitra's</div>
+            <div style={{fontSize:9,color:"#d4789e",fontFamily:_f,fontWeight:500,letterSpacing:2,textTransform:"uppercase"}}>Command Center</div>
+          </div>
+          {nav.map(n => (
+            <button key={n.id} onClick={() => sP(n.id)} style={{display:"flex",alignItems:"center",gap:8,width:"100%",padding:"8px 10px",borderRadius:10,border:"none",cursor:"pointer",marginBottom:1,background:pg===n.id?"rgba(201,149,107,0.12)":"transparent",color:pg===n.id?"#1a1a1a":"#555",fontWeight:pg===n.id?600:400,fontSize:12,fontFamily:_f,textAlign:"left"}}>
+              <span style={{fontSize:14}}>{n.e}</span> {n.l}
+            </button>
+          ))}
+        </div>
+        <div style={{padding:sb?"10px 14px":0,borderTop:"1px solid rgba(0,0,0,0.06)",opacity:sb?1:0}}>
+          <div style={{fontSize:8,color:"#888",fontFamily:_f,textTransform:"uppercase",letterSpacing:1,lineHeight:1.6}}>IG · Financial Services · Life Sciences</div>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main style={{flex:1,padding:"16px 20px",maxWidth:860,margin:"0 auto",width:"100%"}}>
+        <div style={{paddingTop:36}}>
+          {renderPage()}
+        </div>
+      </main>
+    </div>
+  );
+}
