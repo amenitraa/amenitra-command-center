@@ -38,7 +38,7 @@ body.workspace-entered {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .app-shell {
