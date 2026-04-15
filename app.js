@@ -1361,14 +1361,22 @@ function enterWorkspace() {
   workspace.classList.add("workspace-visible");
   enterWorkspaceButton.textContent = "Opening...";
 
-  activeView = { page: "Home" };
-  renderPage();
-
   window.setTimeout(() => {
     welcomeScreen.classList.add("hidden");
     document.body.classList.remove("workspace-entered");
     isEnteringWorkspace = false;
   }, 520);
+
+  try {
+    activeView = { page: "Home" };
+    renderPage();
+  } catch (error) {
+    console.error("Workspace render failed during enter transition.", error);
+    welcomeScreen.classList.add("hidden");
+    document.body.classList.remove("workspace-entered");
+    isEnteringWorkspace = false;
+    enterWorkspaceButton.textContent = "Enter Command Center";
+  }
 }
 
 async function init() {
