@@ -1366,6 +1366,7 @@ function enterWorkspace() {
 
   window.setTimeout(() => {
     welcomeScreen.classList.add("hidden");
+    document.body.classList.remove("workspace-entered");
     isEnteringWorkspace = false;
   }, 520);
 }
