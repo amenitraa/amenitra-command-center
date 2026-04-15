@@ -38,6 +38,14 @@ create table if not exists account_signals (
   created_at timestamptz not null default now()
 );
 
+create table if not exists account_pain_points (
+  id uuid primary key default gen_random_uuid(),
+  account_id uuid not null references accounts(id) on delete cascade,
+  rank integer not null,
+  note text not null,
+  created_at timestamptz not null default now()
+);
+
 create table if not exists account_reminders (
   id uuid primary key default gen_random_uuid(),
   account_id uuid not null references accounts(id) on delete cascade,

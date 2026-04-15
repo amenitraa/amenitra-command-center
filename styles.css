@@ -382,6 +382,10 @@ body {
   grid-template-columns: 1.2fr 0.8fr;
 }
 
+.detail-layout-top {
+  margin-top: 20px;
+}
+
 .detail-main,
 .detail-side,
 .meeting-main,
@@ -432,6 +436,94 @@ body {
 
 .goal-box li {
   margin-bottom: 8px;
+}
+
+.account-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.account-mark {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  background: rgba(17, 17, 17, 0.08);
+  border: 1px solid var(--border);
+}
+
+.intelligence-panel {
+  height: 100%;
+}
+
+.signal-item-accent {
+  border-left: 4px solid rgba(17, 17, 17, 0.14);
+}
+
+.pain-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.pain-item {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid var(--border);
+}
+
+.pain-item p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.pain-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: rgba(17, 17, 17, 0.08);
+}
+
+.deck-preview {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.deck-slide {
+  padding: 18px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid var(--border);
+}
+
+.deck-slide h3 {
+  margin: 0 0 10px;
+}
+
+.deck-slide p {
+  margin: 0 0 10px;
+}
+
+.deck-slide ul {
+  margin: 0 0 12px;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+.deck-slide li {
+  margin-bottom: 6px;
 }
 
 .signal-item a {

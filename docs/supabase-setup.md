@@ -37,6 +37,7 @@ The current integration layer is ready to read and persist:
 - account stakeholders
 - account reminders
 - account signals
+- account pain hierarchy
 - channels
 - channel plays
 - channel developments
@@ -56,3 +57,14 @@ Edits made in the UI will:
 2. attempt to save to Supabase if enabled
 
 If Supabase save fails, the local change still remains visible in the browser.
+
+## What Is Ready Now
+
+- You can persist editable account fields through Supabase, including market position, consultant positioning, current signals, pain hierarchy, reminders, and stakeholders.
+- Strategy Lab and account pages can now be shaped around Supabase-backed account intelligence instead of only local seeded data.
+
+## What Still Needs Airtable
+
+- True Airtable syncing is not connected yet.
+- To read industry/account boards automatically, the app still needs your Airtable API credentials and a sync layer that writes Airtable records into Supabase.
+- Until that is added, Supabase is the best place to store and edit the account intelligence directly.

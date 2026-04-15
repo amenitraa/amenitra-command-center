@@ -18,6 +18,7 @@ let state;
 let activeView = { page: "Home" };
 let connectionMode = "local";
 let meetingOutputState = {};
+let appReady = false;
 
 function escapeHtml(value) {
   return String(value)
@@ -33,20 +34,59 @@ function getMeetingOutput(accountId) {
 }
 
 function buildTeamsMessage(account) {
-  return `Hi team, here is the ${account.name} monthly meeting prep. Key themes to reinforce: ${account.focus}. Biggest consultant POV: ${account.consultantPositioning} Next, I recommend we align on one proof-led follow-up, one stakeholder-specific talking point, and one immediate activation move coming out of the meeting.`;
+  const primarySignal = account.signals[0]?.title || account.focus;
+  const reminder = account.reminders[0] || "align on the strongest next step";
+  return `Hi team, ahead of our ${account.name} meeting I wanted to send a quick preview of where I think the conversation should go. The biggest theme to lean into is ${primarySignal.toLowerCase()}. From a marketing and account-positioning standpoint, I think we should show up with a stronger point of view around ${account.focus}, while keeping the conversation grounded in proof and practical next steps. I’d especially like us to reinforce ${reminder.toLowerCase()}. I’ll come in with a fuller snapshot, but wanted to share the direction in advance so we’re aligned before the meeting.`;
 }
 
 function buildDeckBullets(account) {
-  return [
-    `Performance Snapshot: momentum is building in ${account.focus}, but credibility still needs stronger proof packaging.`,
-    `What Sales Should Do Next: lead with one clear point of view, one proof point, and one immediate next-step ask.`,
-    `Reminders To Bring Up: ${account.reminders.join(" | ")}`
-  ];
+  const signals = account.signals.slice(0, 3);
+  return {
+    slideOneTitle: `Performance Snapshot: ${account.name}`,
+    slideOneTakeaway: `Momentum is building in ${account.focus}, but we are still leaving value on the table when the account story is not packaged tightly enough around proof, urgency, and a clear next move.`,
+    whatWorking: [
+      `${account.notes[0] || account.focus}`,
+      `${account.notes[1] || account.consultantPositioning}`,
+      `${signals[0]?.title || "Recent signals are creating room for a stronger consultant-led conversation"}`
+    ],
+    whereLosing: [
+      "Some of the strongest account themes are not yet being translated into concise seller-ready talk tracks.",
+      "Current momentum could stall if the next ask is not tied directly to the account's most visible pain and urgency.",
+      "Proof is present, but it still needs tighter packaging to drive stakeholder confidence."
+    ],
+    funnelSignals: [
+      `${signals[0]?.detail || "Awareness is present, but conversion depth is inconsistent."}`,
+      `${signals[1]?.detail || "Engagement is strongest when the story is specific to the account pain."}`,
+      `${signals[2]?.detail || "The next best move is to connect current signals to a clearer in-room recommendation."}`
+    ],
+    accountReality: [
+      `Market position: ${account.marketPosition}`,
+      `Consultant angle: ${account.consultantPositioning}`,
+      `Immediate meeting reminders: ${account.reminders.join(" | ")}`
+    ],
+    slideTwoTitle: "Strategic POV: Where We Win Next",
+    coreInsight: account.consultantPositioning,
+    opportunityAreas: [
+      `Double down on ${account.focus} with proof-led messaging.`,
+      "Expand the conversation into the buying group that is closest to the live business pressure.",
+      "Reposition the value around speed, trust, operational lift, and low-risk execution."
+    ],
+    immediateActions: [
+      "Launch one sharper follow-up asset or message tied directly to the current account signal.",
+      "Activate sales with a one-line hook, one proof point, and one next-step ask.",
+      "Use the meeting to align on the next 30-day marketing and stakeholder motion."
+    ],
+    salesNeedsToDo: [
+      "Target the stakeholder group closest to the most urgent business pressure.",
+      "Lead with a concise hook focused on pain reduction without increasing risk.",
+      "Use the strongest proof point or relevant content asset as support."
+    ]
+  };
 }
 
 function renderMeetingOutputPanels(account) {
   const output = getMeetingOutput(account.id);
-  if (!output.teamsMessage && !output.deckBullets) {
+  if (!output.teamsMessage && !output.deckData) {
     return "";
   }
 
@@ -62,20 +102,86 @@ function renderMeetingOutputPanels(account) {
           `
           : ""
       }
-      ${
-        output.deckBullets
-          ? `
+      ${output.deckData
+        ? `
             <article class="goal-box">
-              <span class="label">Generated 2-Slide Deck Notes</span>
-              <ul>
-                ${output.deckBullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-              </ul>
+              <span class="label">Generated 2-Slide Preview</span>
+              <div class="deck-preview">
+                <div class="deck-slide">
+                  <p class="eyebrow">Slide 1</p>
+                  <h3>${escapeHtml(output.deckData.slideOneTitle)}</h3>
+                  <p><strong>Executive takeaway:</strong> ${escapeHtml(output.deckData.slideOneTakeaway)}</p>
+                  <p><strong>What’s working</strong></p>
+                  <ul>
+                    ${output.deckData.whatWorking.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                  </ul>
+                  <p><strong>Where we’re losing</strong></p>
+                  <ul>
+                    ${output.deckData.whereLosing.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                  </ul>
+                  <p><strong>Funnel signals</strong></p>
+                  <ul>
+                    ${output.deckData.funnelSignals.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                  </ul>
+                  <p><strong>Account reality check</strong></p>
+                  <ul>
+                    ${output.deckData.accountReality.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                  </ul>
+                </div>
+                <div class="deck-slide">
+                  <p class="eyebrow">Slide 2</p>
+                  <h3>${escapeHtml(output.deckData.slideTwoTitle)}</h3>
+                  <p><strong>Core insight:</strong> ${escapeHtml(output.deckData.coreInsight)}</p>
+                  <p><strong>Opportunity areas</strong></p>
+                  <ul>
+                    ${output.deckData.opportunityAreas.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                  </ul>
+                  <p><strong>Immediate actions</strong></p>
+                  <ul>
+                    ${output.deckData.immediateActions.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                  </ul>
+                  <p><strong>What sales needs to do</strong></p>
+                  <ul>
+                    ${output.deckData.salesNeedsToDo.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                  </ul>
+                </div>
+              </div>
             </article>
           `
-          : ""
-      }
+        : ""}
     </div>
   `;
+}
+
+function renderSignalSource(signal) {
+  if (!signal.sourceUrl || signal.sourceUrl === "#") {
+    return `<p class="meta">${escapeHtml(signal.sourceLabel)}</p>`;
+  }
+
+  return `<p class="meta"><a href="${signal.sourceUrl}">${escapeHtml(signal.sourceLabel)}</a></p>`;
+}
+
+function formatSignalsForEditor(signals) {
+  return signals
+    .map((signal) => [signal.title, signal.detail, signal.sourceLabel, signal.sourceUrl].map((item) => item || "").join(" | "))
+    .join("\n");
+}
+
+function parseSignalsFromEditor(value) {
+  return String(value)
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [title = "", detail = "", sourceLabel = "Source", sourceUrl = "#"] = line.split("|").map((item) => item.trim());
+      return {
+        title,
+        detail,
+        sourceLabel: sourceLabel || "Source",
+        sourceUrl: sourceUrl || "#"
+      };
+    })
+    .filter((signal) => signal.title && signal.detail);
 }
 
 function renderWelcomeCards() {
@@ -291,9 +397,12 @@ function renderAccountDetailPage(accountId) {
 
   pageContent.innerHTML = `
     <div class="section-header">
-      <div>
-        <p class="eyebrow">${account.industry}</p>
-        <h2>${account.name}</h2>
+      <div class="account-hero">
+        <div class="account-mark">${escapeHtml(account.name.slice(0, 2).toUpperCase())}</div>
+        <div>
+          <h2>${account.name}</h2>
+          <p class="meta">${account.industry}${account.subIndustry ? ` • ${account.subIndustry}` : ""}</p>
+        </div>
       </div>
       <div class="actions-row">
         <button class="secondary-button" data-refresh-account="${account.id}" type="button">Refresh Account</button>
@@ -301,23 +410,73 @@ function renderAccountDetailPage(accountId) {
       </div>
     </div>
 
-    <div class="detail-layout">
+    <article class="feature-card detail-section">
+      <div class="card-title-row">
+        <div>
+          <p class="eyebrow">Market Position</p>
+          <h3>Account Reality Check</h3>
+        </div>
+        <span class="tag">${account.status}</span>
+      </div>
+      <p>${account.marketPosition}</p>
+      <div class="meta-row">
+        <span class="tag">Target ${account.target}</span>
+        <span class="tag">${account.focus}</span>
+      </div>
+    </article>
+
+    <div class="detail-layout detail-layout-top">
       <div class="detail-main">
-        <article class="feature-card detail-section">
+        <article class="feature-card detail-section intelligence-panel">
           <div class="card-title-row">
             <div>
-              <p class="eyebrow">Market Position</p>
-              <h3>Account Reality Check</h3>
+              <p class="eyebrow">Current Signals</p>
+              <h3>What Is Happening In The Company And Industry</h3>
             </div>
-            <span class="tag">${account.status}</span>
+            <span class="tag">Intelligence View</span>
           </div>
-          <p>${account.marketPosition}</p>
-          <div class="meta-row">
-            <span class="tag">Target ${account.target}</span>
-            <span class="tag">${account.focus}</span>
+          <div class="signal-list">
+            ${account.signals
+              .map(
+                (signal) => `
+                  <div class="signal-item signal-item-accent">
+                    <strong>${signal.title}</strong>
+                    <p>${signal.detail}</p>
+                    ${renderSignalSource(signal)}
+                  </div>
+                `
+              )
+              .join("")}
           </div>
         </article>
+      </div>
 
+      <div class="detail-side">
+        <article class="feature-card detail-section intelligence-panel">
+          <div class="card-title-row">
+            <div>
+              <p class="eyebrow">Pain Hierarchy</p>
+              <h3>What Matters Most Right Now</h3>
+            </div>
+          </div>
+          <div class="pain-stack">
+            ${account.painHierarchy
+              .map(
+                (pain, index) => `
+                  <div class="pain-item">
+                    <span class="pain-rank">#${index + 1}</span>
+                    <p>${pain}</p>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="detail-layout">
+      <div class="detail-main">
         <article class="feature-card detail-section">
           <div class="card-title-row">
             <div>
@@ -329,29 +488,6 @@ function renderAccountDetailPage(accountId) {
           <ul>
             ${account.notes.map((note) => `<li>${note}</li>`).join("")}
           </ul>
-        </article>
-
-        <article class="feature-card detail-section">
-          <div class="card-title-row">
-            <div>
-              <p class="eyebrow">Current Signals</p>
-              <h3>What Is Happening Right Now</h3>
-            </div>
-            <span class="tag">Source Linked</span>
-          </div>
-          <div class="signal-list">
-            ${account.signals
-              .map(
-                (signal) => `
-                  <div class="signal-item">
-                    <strong>${signal.title}</strong>
-                    <p>${signal.detail}</p>
-                    <p class="meta"><a href="${signal.sourceUrl}">${signal.sourceLabel}</a></p>
-                  </div>
-                `
-              )
-              .join("")}
-          </div>
         </article>
       </div>
 
@@ -590,26 +726,83 @@ function renderStrategyLabPage() {
   pageContent.innerHTML = `
     <div class="section-header">
       <h2>Strategy Lab</h2>
-      <span class="tag">AI Recs Framing</span>
+      <span class="tag">Working Layer</span>
     </div>
-    <div class="goal-grid">
-      ${state.strategyRecommendations
+
+    <div class="overview-grid">
+      ${state.strategyLab.overview
         .map(
           (item) => `
-            <article class="goal-box">
+            <article class="feature-card detail-section">
+              <p class="eyebrow">Strategy Snapshot</p>
               <h3>${item.title}</h3>
-              <p>${item.detail}</p>
+              <p>${item.text}</p>
             </article>
           `
         )
         .join("")}
     </div>
-    <div class="placeholder-layout">
-      <article class="feature-card detail-section">
-        <p class="eyebrow">Next Build Layer</p>
-        <h3>${state.placeholders.strategyLab.title}</h3>
-        <p>${state.placeholders.strategyLab.text}</p>
-      </article>
+
+    <div class="section-header">
+      <h2>Account Strategic Shifts</h2>
+      <span class="tag">Consultant POV</span>
+    </div>
+    <div class="account-grid">
+      ${state.strategyLab.accountMoves
+        .map((move) => {
+          const account = state.accounts.find((item) => item.id === move.accountId);
+          return `
+            <article class="account-card">
+              <div class="account-card-header">
+                <div>
+                  <p class="eyebrow">${account?.industry || "Account"}</p>
+                  <h3>${account?.name || move.accountId}</h3>
+                </div>
+              </div>
+              <p><strong>Strategic shift:</strong> ${move.shift}</p>
+              <p><strong>Next move:</strong> ${move.nextMove}</p>
+            </article>
+          `;
+        })
+        .join("")}
+    </div>
+
+    <div class="detail-layout">
+      <div class="detail-main">
+        <article class="feature-card detail-section">
+          <div class="card-title-row">
+            <div>
+              <p class="eyebrow">Channel Moves</p>
+              <h3>Where To Optimize Next</h3>
+            </div>
+          </div>
+          <div class="list-stack">
+            ${state.strategyLab.channelMoves
+              .map(
+                (move) => `
+                  <div class="list-item">
+                    <strong>${move.channel}</strong>
+                    <p>${move.recommendation}</p>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+        </article>
+      </div>
+      <div class="detail-side">
+        <article class="feature-card detail-section">
+          <div class="card-title-row">
+            <div>
+              <p class="eyebrow">Knowledge Gaps</p>
+              <h3>What To Close Next</h3>
+            </div>
+          </div>
+          <ul>
+            ${state.strategyLab.knowledgeGaps.map((item) => `<li>${item}</li>`).join("")}
+          </ul>
+        </article>
+      </div>
     </div>
   `;
 }
@@ -847,6 +1040,22 @@ function openAccountEditor(accountId) {
       <textarea id="account-positioning" name="consultantPositioning">${account.consultantPositioning}</textarea>
     </div>
     <div class="form-field">
+      <label for="account-pain-hierarchy">Pain Hierarchy</label>
+      <textarea id="account-pain-hierarchy" name="painHierarchy">${account.painHierarchy.join("\n")}</textarea>
+    </div>
+    <div class="form-field">
+      <label for="account-signals">Current Signals</label>
+      <textarea id="account-signals" name="signals">${formatSignalsForEditor(account.signals)}</textarea>
+    </div>
+    <div class="form-field">
+      <label for="account-signals-help">Current Signals Format</label>
+      <textarea id="account-signals-help" readonly>Use one line per signal in this format:
+Title | Detail | Source Label | Source URL
+
+Example:
+State Farm promoted a new CDAO | Leadership change is making data and AI more central to digital strategy. | Company signal | https://example.com</textarea>
+    </div>
+    <div class="form-field">
       <label for="account-reminders">Reminders For Next Meeting</label>
       <textarea id="account-reminders" name="reminders">${account.reminders.join("\n")}</textarea>
     </div>
@@ -868,6 +1077,11 @@ function openAccountEditor(accountId) {
       .filter(Boolean);
     account.marketPosition = String(formData.get("marketPosition") || "").trim();
     account.consultantPositioning = String(formData.get("consultantPositioning") || "").trim();
+    account.painHierarchy = String(formData.get("painHierarchy") || "")
+      .split("\n")
+      .map((item) => item.trim())
+      .filter(Boolean);
+    account.signals = parseSignalsFromEditor(formData.get("signals") || "");
     account.reminders = String(formData.get("reminders") || "")
       .split("\n")
       .map((item) => item.trim())
@@ -1014,7 +1228,7 @@ function generateDeck(accountId) {
 
   meetingOutputState[accountId] = {
     ...getMeetingOutput(accountId),
-    deckBullets: buildDeckBullets(account)
+    deckData: buildDeckBullets(account)
   };
 
   activeView = { page: "Meetings", accountId };
@@ -1100,6 +1314,11 @@ function handlePageClick(event) {
 }
 
 function enterWorkspace() {
+  if (!appReady || !state) {
+    enterWorkspaceButton.textContent = "Loading Command Center...";
+    return;
+  }
+
   welcomeScreen.classList.add("hidden");
   workspace.classList.remove("hidden");
   activeView = { page: "Home" };
@@ -1110,13 +1329,18 @@ async function init() {
   const result = await loadAppState();
   state = result.state;
   connectionMode = result.mode;
+  appReady = true;
 
   renderWelcomeCards();
   renderNav();
   renderQuote();
   renderPage();
+  enterWorkspaceButton.disabled = false;
+  enterWorkspaceButton.textContent = "Enter Command Center";
 }
 
+enterWorkspaceButton.disabled = true;
+enterWorkspaceButton.textContent = "Loading Command Center...";
 enterWorkspaceButton.addEventListener("click", enterWorkspace);
 document.addEventListener("click", handlePageClick);
 closeModalButton.addEventListener("click", closeModal);

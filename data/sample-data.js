@@ -79,46 +79,54 @@ export const sampleData = {
       id: "boa",
       name: "Bank of America",
       industry: "Financial Services",
+      subIndustry: "Banking",
       target: "$102M",
       stakeholders: ["Emily Outen", "Lia Larson"],
       focus: "AML, cloud, AI, fraud",
       status: "Key account",
-      marketPosition: "Established partner with room to deepen proof-led professional services credibility in regulated transformation work.",
+      marketPosition: "Bank of America remains a large-scale modernization and control environment where execution credibility matters as much as innovation language. The account is under constant pressure to improve resilience, fraud controls, AML throughput, data access, and cloud maturity without increasing operational risk. That creates room for a partner who can show disciplined delivery, not just ideas.",
       consultantPositioning: "Lead with controlled execution, procurement-defensible proof, and a point of view on AML, fraud, cloud, and AI adoption with governance.",
+      painHierarchy: [
+        "AML and fraud operations still require throughput improvement without weakening controls or audit readiness.",
+        "AI conversations are moving forward, but they need a clear governance and adoption path instead of broad experimentation.",
+        "Cloud and data modernization work must show business value without creating new risk for already-complex teams.",
+        "Vendor trust remains tied to proof, documentation, and execution discipline rather than capability claims alone.",
+        "Stakeholder attention is fragmented across compliance, technology, security, and customer pressure."
+      ],
       reminders: [
         "Bring stronger proof points tied to AML and fraud throughput improvements",
         "Surface any cloud modernization wins that help expand beyond current trust zones"
       ],
       signals: [
         {
-          title: "Financial crimes and AML pressure remain a strong opening",
-          detail: "Use backlog reduction, compliant delivery, and governance language in account storytelling.",
-          sourceLabel: "FS Strategy",
+          title: "Financial crime and fraud pressure continues to keep operational efficiency and control in the spotlight",
+          detail: "This keeps AML, fraud operations, and identity-focused support relevant when the story is tied to throughput, risk reduction, and clean execution.",
+          sourceLabel: "Earnings / Investor Commentary",
           sourceUrl: "#"
         },
         {
-          title: "AI and cloud conversations require a safe-path narrative",
-          detail: "Position AI as governed enablement instead of experimentation.",
-          sourceLabel: "Account Notes",
+          title: "AI remains a live topic, but the buying lens is governed enablement rather than experimentation",
+          detail: "Position AI as a safe path tied to operations, controls, analytics, and business outcomes instead of futuristic transformation language.",
+          sourceLabel: "Industry / Company Trend",
           sourceUrl: "#"
         },
         {
-          title: "Identity risk is becoming a sharper board-level conversation",
-          detail: "Tie your proof points to identity, access, and machine-identity control rather than broad cyber language.",
-          sourceLabel: "IG Blog: Identity Question",
-          sourceUrl: "https://insightglobal.com/blog/the-identity-question-every-financial-organization-should-ask-themselves/"
+          title: "Identity, access, and trust architecture conversations are getting more executive visibility",
+          detail: "That makes identity-first security and compliant delivery more important than generic cyber positioning.",
+          sourceLabel: "Security / Risk Theme",
+          sourceUrl: "#"
         },
         {
-          title: "Customer experience pressure is still shaping investment priorities",
-          detail: "Frame modernization and AI support around trust, efficiency, and smoother regulated customer experiences.",
-          sourceLabel: "IG Blog: CX in FS",
-          sourceUrl: "https://insightglobal.com/blog/customer-experience-in-financial-services/"
+          title: "Customer experience and internal efficiency are increasingly connected in modernization work",
+          detail: "Frame cloud, data, and AI support around speed, trust, and smoother customer-facing operations in regulated environments.",
+          sourceLabel: "CX / Ops Signal",
+          sourceUrl: "#"
         },
         {
-          title: "2026 planning is shifting from foundation-building to leverage",
-          detail: "Bring a point of view on how Insight Global helps turn modernization work into operational gains now.",
-          sourceLabel: "IG Blog: 7 FS Trends",
-          sourceUrl: "https://insightglobal.com/blog/2026-financial-services-trends/"
+          title: "The market expectation is shifting from foundation-building to measurable leverage from existing investments",
+          detail: "Show how Insight Global helps turn transformation effort into actual delivery lift now, not just longer-term potential.",
+          sourceLabel: "2026 Planning Signal",
+          sourceUrl: "#"
         }
       ],
       notes: [
@@ -131,46 +139,54 @@ export const sampleData = {
       id: "state-farm",
       name: "State Farm",
       industry: "Financial Services",
+      subIndustry: "Insurance",
       target: "$2M",
       stakeholders: ["Erin Meadows", "Charlie Loveall", "Rachel Peacock"],
       focus: "CSP path, surge staffing, data + AI",
       status: "New logo",
-      marketPosition: "Promising new-logo opportunity with strong regional relevance and room to build trust across data, AI, and surge staffing.",
+      marketPosition: "State Farm is balancing digital transformation, data and analytics integration, claims and underwriting pressure, and insurance-market volatility at the same time. The account story is not just modernization, it is modernization while managing catastrophe exposure, profitability pressure, customer experience expectations, and operating scale. That makes speed-with-control and surge support especially relevant.",
       consultantPositioning: "Show up as a practical partner who can stabilize operations, support claims and underwriting pressure, and create a credible CSP path.",
+      painHierarchy: [
+        "Claims, underwriting, and service operations need support while the business is still absorbing volatility and catastrophe pressure.",
+        "Data, analytics, and AI ambitions require more delivery talent and operating discipline to move from interest to scaled execution.",
+        "Digital modernization has to move quickly without disrupting customer-facing stability or core insurance operations.",
+        "Insurance profitability pressure raises the bar for any outside partner to show cost discipline and measurable operational lift.",
+        "The buying conversation is likely to favor practical, regionally credible partners over abstract transformation narratives."
+      ],
       reminders: [
         "Mention any claims, AI, or staffing updates that support surge delivery relevance",
         "Reinforce the Atlanta proximity and local credibility angle"
       ],
       signals: [
         {
-          title: "Claims and underwriting workload pressure supports surge staffing plays",
-          detail: "Tie staffing relief to faster cycle times and more stable delivery.",
-          sourceLabel: "FS Strategy",
+          title: "Claims and underwriting pressure keeps surge support and staffing stability highly relevant",
+          detail: "Tie the story to operational stability, improved cycle times, and practical relief for overloaded teams.",
+          sourceLabel: "Insurance Operating Signal",
           sourceUrl: "#"
         },
         {
-          title: "Data and AI narrative needs proof and consistency",
-          detail: "Position secure delivery discipline as part of the value proposition.",
-          sourceLabel: "Current Signal",
+          title: "Data, analytics, and AI are converging under a more integrated digital mandate",
+          detail: "Position your value around delivery support, data talent, and consistent execution rather than innovation language alone.",
+          sourceLabel: "Leadership / Org Signal",
           sourceUrl: "#"
         },
         {
-          title: "Insurance organizations are under simultaneous volatility, regulation, and cost pressure",
-          detail: "Lead with cost-safe execution and operational stability rather than abstract transformation messaging.",
-          sourceLabel: "IG Blog: Cost-Safe Insurance Ops",
-          sourceUrl: "https://insightglobal.com/blog/cost-safe-insurance-operations/"
+          title: "Insurance carriers are operating under simultaneous catastrophe, regulatory, and cost pressure",
+          detail: "Lead with cost-conscious operational lift and stable delivery instead of abstract transformation positioning.",
+          sourceLabel: "Insurance Industry Signal",
+          sourceUrl: "#"
         },
         {
-          title: "Claims spikes are a timely operational wedge",
-          detail: "Use surge staffing and follow-through language around stabilizing operations when claims volume surges.",
-          sourceLabel: "IG Blog: Stabilize Insurance Operations",
-          sourceUrl: "https://insightglobal.com/blog/how-to-stabilize-your-insurance-operations/"
+          title: "Claims spikes and property-loss volatility create a strong wedge for practical consultant support",
+          detail: "Use surge staffing, follow-through, and process stability language when you want to make the account story feel immediate.",
+          sourceLabel: "Claims / Catastrophe Signal",
+          sourceUrl: "#"
         },
         {
-          title: "Compliant modernization for data and AI is now a practical insurance conversation",
-          detail: "Position data + AI as compliant modernization with strong controls, not experimental AI transformation.",
-          sourceLabel: "IG Blog: Compliant Modernization in Insurance",
-          sourceUrl: "https://insightglobal.com/blog/compliant-modernization-in-insurance/"
+          title: "Compliant modernization for data and AI is becoming a practical operating conversation",
+          detail: "Position data + AI as disciplined modernization with strong controls, not experimental AI transformation.",
+          sourceLabel: "AI / Modernization Signal",
+          sourceUrl: "#"
         }
       ],
       notes: [
@@ -183,46 +199,54 @@ export const sampleData = {
       id: "capital-one",
       name: "Capital One",
       industry: "Financial Services",
+      subIndustry: "Banking",
       target: "Re-entry",
       stakeholders: ["Grace Han", "Charlie Loveall", "Rachel Peacock"],
       focus: "Fraud-first, AML/KYC, procurement trust rebuild",
       status: "Re-entry",
-      marketPosition: "Re-entry motion where credibility and vendor trust matter more than volume of outreach.",
+      marketPosition: "Capital One is a re-entry account where trust, risk posture, and procurement credibility are central. The opportunity is not about flooding the zone with marketing; it is about showing that Insight Global can be a safe, documented, low-friction extension of internal teams in areas like fraud, AML/KYC, and controlled delivery support.",
       consultantPositioning: "Lead with fraud-first controls, low-risk re-entry, and clean delivery proof that procurement can trust.",
+      painHierarchy: [
+        "Procurement trust and vendor risk posture create a higher bar for entry than standard demand generation alone can solve.",
+        "Fraud, candidate authenticity, and delivery quality are likely shaping how outside partners are evaluated.",
+        "Any new engagement path has to feel low-risk, controlled, and easy to defend internally.",
+        "Risk, compliance, and operations teams need proof of reliability before broader positioning will land.",
+        "Expansion depends on getting the first scoped win cleanly and visibly."
+      ],
       reminders: [
         "Bring controlled-entry language and proof assets into the next meeting",
         "Reinforce how IG lowers risk instead of adding vendor friction"
       ],
       signals: [
         {
-          title: "Procurement trust is the central barrier",
-          detail: "All messaging should reduce perceived risk and reinforce governance.",
-          sourceLabel: "FS Strategy",
+          title: "Procurement trust remains the biggest barrier to re-entry",
+          detail: "All messaging should reduce perceived risk, reinforce governance, and feel easy for stakeholders to defend internally.",
+          sourceLabel: "Account Strategy Signal",
           sourceUrl: "#"
         },
         {
-          title: "Fraud and false-candidate concerns shape the account story",
-          detail: "Use screening and authenticity language as differentiators.",
-          sourceLabel: "Account Strategy",
+          title: "Fraud and candidate-authenticity concerns are shaping vendor evaluation",
+          detail: "Use screening controls, retention stability, and clean delivery language as differentiators.",
+          sourceLabel: "Risk / Vendor Signal",
           sourceUrl: "#"
         },
         {
-          title: "Identity and access risk is becoming more visible in financial organizations",
-          detail: "Use this to reinforce fraud-first controls and compliant re-entry messaging.",
-          sourceLabel: "IG Blog: Identity Question",
-          sourceUrl: "https://insightglobal.com/blog/the-identity-question-every-financial-organization-should-ask-themselves/"
+          title: "Identity, access, and trust concerns are becoming more visible across financial institutions",
+          detail: "Use this to reinforce fraud-first controls and compliant re-entry messaging rather than generic talent language.",
+          sourceLabel: "Security / Risk Signal",
+          sourceUrl: "#"
         },
         {
-          title: "Financial institutions are expecting leverage from earlier modernization investments",
-          detail: "Bring low-risk proof that shows how IG helps realize gains without adding procurement friction.",
-          sourceLabel: "IG Blog: 7 FS Trends",
-          sourceUrl: "https://insightglobal.com/blog/2026-financial-services-trends/"
+          title: "Financial organizations are expecting more leverage from existing modernization investments",
+          detail: "Bring low-risk proof that shows how IG helps realize gains without increasing procurement friction.",
+          sourceLabel: "Planning Signal",
+          sourceUrl: "#"
         },
         {
-          title: "Fraud, AI, and customer trust are converging in buying conversations",
-          detail: "Keep the message narrow: safe execution, reliable consultants, and documented proof.",
-          sourceLabel: "IG Blog: CX in FS",
-          sourceUrl: "https://insightglobal.com/blog/customer-experience-in-financial-services/"
+          title: "Fraud, AI, and customer trust are increasingly connected in buying conversations",
+          detail: "Keep the message narrow: safe execution, reliable consultants, and documented proof over broad transformation positioning.",
+          sourceLabel: "Market Signal",
+          sourceUrl: "#"
         }
       ],
       notes: [
@@ -235,46 +259,54 @@ export const sampleData = {
       id: "jnj",
       name: "Johnson & Johnson",
       industry: "Life Sciences",
+      subIndustry: "Pharma / MedTech",
       target: "$104M",
       stakeholders: ["Ashley Nash", "Katie Wasko"],
       focus: "R&D, manufacturing, FSP",
       status: "Key account",
-      marketPosition: "Major strategic account with room to strengthen manufacturing, R&D, and FSP-led partnership depth.",
+      marketPosition: "Johnson & Johnson is a scale account where manufacturing readiness, R&D execution, and disciplined support models matter. The opportunity is not only to position around innovation, but to show how Insight Global helps complex programs move faster with better continuity across manufacturing, facility readiness, and functional service support.",
       consultantPositioning: "Show how IG supports scale, speed, and operational readiness across manufacturing and R&D environments without sacrificing quality.",
+      painHierarchy: [
+        "Manufacturing and supply chain readiness create pressure for reliable execution support, not just strategic planning.",
+        "R&D and product development environments still need speed without sacrificing quality, continuity, or documentation.",
+        "FSP positioning has to feel like operational leverage, not just another staffing label.",
+        "Large-scale programs demand partners that can support facility stand-up, transfer, and continuity across regions.",
+        "Innovation messaging only lands when it is grounded in actual program movement and output."
+      ],
       reminders: [
         "Bring facility stand-up and FSP proof into the meeting narrative",
         "Connect manufacturing support to practical readiness and throughput"
       ],
       signals: [
         {
-          title: "Manufacturing and R&D remain central opportunity areas",
-          detail: "Keep positioning tied to execution support, speed, and reliability.",
+          title: "Manufacturing and R&D remain central operating pressure points",
+          detail: "Keep positioning tied to execution support, speed, reliability, and continuity rather than just innovation language.",
           sourceLabel: "Life Sciences Strategy",
           sourceUrl: "#"
         },
         {
-          title: "FSP language should anchor consultant credibility",
-          detail: "Use it to differentiate from larger consulting competitors.",
+          title: "FSP remains a strong credibility anchor when the conversation is about execution depth",
+          detail: "Use it to differentiate from larger consulting competitors by making it feel practical and operational.",
           sourceLabel: "Account Summary",
           sourceUrl: "#"
         },
         {
           title: "Optimization pressure is accelerating across life sciences operations",
           detail: "Position J&J support around faster execution, fewer slowdowns, and more resilient delivery.",
-          sourceLabel: "IG Blog: Accelerating Innovation",
-          sourceUrl: "https://insightglobal.com/blog/life-sciences-accelerating-innovation/"
+          sourceLabel: "Industry Operating Signal",
+          sourceUrl: "#"
         },
         {
-          title: "AI and MedTech convergence is shaping 2026 planning",
-          detail: "Bring a practical point of view on where digital enablement supports R&D and manufacturing outcomes.",
-          sourceLabel: "IG Blog: LS Trends 2026",
-          sourceUrl: "https://insightglobal.com/blog/top-trends-shaping-life-sciences/"
+          title: "AI and digital enablement are influencing 2026 planning, but with a practical execution lens",
+          detail: "Bring a point of view on where digital support helps R&D and manufacturing outcomes instead of over-indexing on innovation buzzwords.",
+          sourceLabel: "Planning Signal",
+          sourceUrl: "#"
         },
         {
-          title: "Innovation stories are landing best when tied to speed and optimization",
+          title: "Innovation stories land best when tied to readiness, speed, and optimization",
           detail: "Use innovation language only when it leads back to operational readiness and scale.",
-          sourceLabel: "IG Blog: Innovation in Life Sciences",
-          sourceUrl: "https://insightglobal.com/blog/innovation-in-life-sciences/"
+          sourceLabel: "Market Signal",
+          sourceUrl: "#"
         }
       ],
       notes: [
@@ -287,12 +319,20 @@ export const sampleData = {
       id: "eli-lilly",
       name: "Eli Lilly",
       industry: "Life Sciences",
+      subIndustry: "Pharma",
       target: "Growth",
       stakeholders: ["Charlie Loveall", "Katie Wasko"],
       focus: "M&Q, AI/digital, FSP model positioning",
       status: "Growth",
-      marketPosition: "High-growth account where scale-up urgency creates room for sharper consultant-led guidance.",
+      marketPosition: "Eli Lilly is a growth account where scale-up urgency creates space for a much sharper consultant-led story. The account is well suited for positioning around manufacturing and quality support, AI and digital enablement, and FSP-based execution leverage, especially when the narrative stays focused on speed, throughput, and readiness.",
       consultantPositioning: "Position IG around M&Q support, digital acceleration, and FSP structure that helps the business move quickly and confidently.",
+      painHierarchy: [
+        "M&Q scale-up pressure raises the value of practical execution support that can move quickly.",
+        "AI and digital conversations need to connect directly to throughput, readiness, and operational value.",
+        "FSP has to be positioned as a model for speed and continuity, not a generic delivery label.",
+        "Rapid growth increases the importance of specialized support and clean stakeholder follow-through.",
+        "The strongest conversation will center on scale, speed, and confidence rather than broad innovation language."
+      ],
       reminders: [
         "Tie talking points to scale-up pressure and operational readiness",
         "Bring a clear point of view on digital acceleration, not just staffing support"
@@ -300,33 +340,33 @@ export const sampleData = {
       signals: [
         {
           title: "M&Q scale-up keeps the urgency high",
-          detail: "Anchor actions in speed, support, and throughput.",
+          detail: "Anchor actions in speed, support, and throughput rather than generic growth messaging.",
           sourceLabel: "Life Sciences Summary",
           sourceUrl: "#"
         },
         {
-          title: "AI and digital acceleration can widen the conversation",
+          title: "AI and digital acceleration can widen the conversation when it is tied to specific operating outcomes",
           detail: "Bring concrete next-step ideas rather than broad innovation language.",
           sourceLabel: "Account Notes",
           sourceUrl: "#"
         },
         {
-          title: "Optimization is becoming a competitive necessity in life sciences",
-          detail: "Tie your point of view to speed, quality, and process stability rather than just digital buzzwords.",
-          sourceLabel: "IG Blog: Accelerating Innovation",
-          sourceUrl: "https://insightglobal.com/blog/life-sciences-accelerating-innovation/"
+          title: "Optimization is becoming a competitive necessity across life sciences operations",
+          detail: "Tie your point of view to speed, quality, and process stability rather than digital buzzwords alone.",
+          sourceLabel: "Industry Operating Signal",
+          sourceUrl: "#"
         },
         {
-          title: "2026 trends are reinforcing AI, data, and compliance together",
+          title: "2026 planning is reinforcing AI, data, and compliance together",
           detail: "Frame AI and digital support around practical adoption in regulated environments.",
-          sourceLabel: "IG Blog: LS Trends 2026",
-          sourceUrl: "https://insightglobal.com/blog/top-trends-shaping-life-sciences/"
+          sourceLabel: "Planning Signal",
+          sourceUrl: "#"
         },
         {
-          title: "Innovation stories are landing best when tied to actual operating lift",
+          title: "Innovation stories land best when tied to actual operating lift",
           detail: "Use AI and digital acceleration language only when it clearly ties back to speed, throughput, and readiness.",
-          sourceLabel: "IG Blog: Innovation in Life Sciences",
-          sourceUrl: "https://insightglobal.com/blog/innovation-in-life-sciences/"
+          sourceLabel: "Market Signal",
+          sourceUrl: "#"
         }
       ],
       notes: [
@@ -585,6 +625,73 @@ export const sampleData = {
       detail: "Content activation should map directly to named account priorities instead of being distributed evenly across the portfolio."
     }
   ],
+  strategyLab: {
+    overview: [
+      {
+        title: "Portfolio Shift",
+        text: "Move from broad awareness language to consultant-led account narratives grounded in pain, proof, and the next 30-day action."
+      },
+      {
+        title: "Best Growth Wedge",
+        text: "Use live company and industry signals to shape account-specific sales hooks before monthly stakeholder meetings."
+      },
+      {
+        title: "Biggest Gap",
+        text: "A lot of the strongest themes exist, but they are not always being translated into seller-ready messaging by account and channel."
+      }
+    ],
+    accountMoves: [
+      {
+        accountId: "boa",
+        shift: "Sharpen the story around AML, fraud, and controlled AI adoption instead of treating modernization as one broad bucket.",
+        nextMove: "Build one proof-led follow-up sequence that sales can use after meetings with compliance, fraud, and cloud stakeholders."
+      },
+      {
+        accountId: "state-farm",
+        shift: "Position Insight Global as the practical support partner for claims pressure, data execution, and compliant AI progression.",
+        nextMove: "Translate insurance volatility and operating pressure into a clearer consultant message for the next account conversation."
+      },
+      {
+        accountId: "capital-one",
+        shift: "Treat the account as a trust rebuild motion first and a demand generation motion second.",
+        nextMove: "Package a low-risk re-entry narrative that procurement and risk leaders can defend internally."
+      },
+      {
+        accountId: "jnj",
+        shift: "Anchor the conversation in manufacturing readiness, R&D execution, and FSP-supported continuity rather than broad innovation.",
+        nextMove: "Package manufacturing and facility-support proof into a more board-friendly operational story."
+      },
+      {
+        accountId: "eli-lilly",
+        shift: "Use scale-up urgency to position IG around M&Q support, digital execution, and FSP leverage.",
+        nextMove: "Create a tighter point of view on what sales should say when speed and readiness come up in the room."
+      }
+    ],
+    channelMoves: [
+      {
+        channel: "Email & ABM",
+        recommendation: "Use shorter, account-specific briefs with one business pressure, one proof point, and one next-step CTA."
+      },
+      {
+        channel: "Content & SEO",
+        recommendation: "Separate company/industry signal intelligence from Insight Global content so the account pages feel like intelligence, not a content library."
+      },
+      {
+        channel: "Events & Field",
+        recommendation: "Use local touchpoints as trust accelerators tied to one concrete account pain, not broad relationship maintenance."
+      },
+      {
+        channel: "Web",
+        recommendation: "Treat account-adjacent landing pages as proof environments that support the exact story sales needs to tell."
+      }
+    ],
+    knowledgeGaps: [
+      "Which stakeholders are most likely to sponsor or block the next move in each account?",
+      "Which proof points are strong enough to survive procurement or risk scrutiny?",
+      "Which live company or industry signals should directly change next month’s agenda and talking points?",
+      "Where are we still using broad messaging when the account needs a narrower consultant point of view?"
+    ]
+  },
   tasks: [
     {
       id: "task-1",
