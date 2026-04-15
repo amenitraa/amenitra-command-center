@@ -19,6 +19,7 @@ let activeView = { page: "Home" };
 let connectionMode = "local";
 let meetingOutputState = {};
 let appReady = false;
+let isEnteringWorkspace = false;
 
 function escapeHtml(value) {
   return String(value)
@@ -161,9 +162,35 @@ function renderSignalSource(signal) {
   return `<p class="meta"><a href="${signal.sourceUrl}">${escapeHtml(signal.sourceLabel)}</a></p>`;
 }
 
+function deriveSignalNextStep(signal, account) {
+  if (signal.nextStep) {
+    return signal.nextStep;
+  }
+
+  const sourceText = `${signal.title} ${signal.detail}`.toLowerCase();
+
+  if (sourceText.includes("claims") || sourceText.includes("underwriting")) {
+    return `Turn this into a practical ${account.name} talking point around surge support, workflow stability, and faster operational throughput.`;
+  }
+
+  if (sourceText.includes("ai") || sourceText.includes("analytics") || sourceText.includes("data")) {
+    return `Keep the recommendation grounded in governed execution by showing how ${account.name} can move from interest to practical delivery support.`;
+  }
+
+  if (sourceText.includes("procurement") || sourceText.includes("trust") || sourceText.includes("risk")) {
+    return `Use this signal to tighten the risk-safe narrative and bring one proof point that makes the next step feel easier to approve.`;
+  }
+
+  if (sourceText.includes("manufacturing") || sourceText.includes("r&d") || sourceText.includes("m&q")) {
+    return `Translate this into a speed-and-readiness message that shows how Insight Global can reduce friction in execution, staffing, or scale-up.`;
+  }
+
+  return `Use this signal to sharpen the next meeting agenda, align one stakeholder-specific hook, and recommend one immediate follow-up action tied to ${account.focus}.`;
+}
+
 function formatSignalsForEditor(signals) {
   return signals
-    .map((signal) => [signal.title, signal.detail, signal.sourceLabel, signal.sourceUrl].map((item) => item || "").join(" | "))
+    .map((signal) => [signal.title, signal.detail, signal.sourceLabel, signal.sourceUrl, signal.nextStep || ""].map((item) => item || "").join(" | "))
     .join("\n");
 }
 
@@ -173,12 +200,13 @@ function parseSignalsFromEditor(value) {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => {
-      const [title = "", detail = "", sourceLabel = "Source", sourceUrl = "#"] = line.split("|").map((item) => item.trim());
+      const [title = "", detail = "", sourceLabel = "Source", sourceUrl = "#", nextStep = ""] = line.split("|").map((item) => item.trim());
       return {
         title,
         detail,
         sourceLabel: sourceLabel || "Source",
-        sourceUrl: sourceUrl || "#"
+        sourceUrl: sourceUrl || "#",
+        nextStep: nextStep || ""
       };
     })
     .filter((signal) => signal.title && signal.detail);
@@ -443,6 +471,10 @@ function renderAccountDetailPage(accountId) {
                     <strong>${signal.title}</strong>
                     <p>${signal.detail}</p>
                     ${renderSignalSource(signal)}
+                    <div class="signal-next-step">
+                      <span class="label">How We Stay Relevant</span>
+                      <p>${escapeHtml(deriveSignalNextStep(signal, account))}</p>
+                    </div>
                   </div>
                 `
               )
@@ -1050,10 +1082,10 @@ function openAccountEditor(accountId) {
     <div class="form-field">
       <label for="account-signals-help">Current Signals Format</label>
       <textarea id="account-signals-help" readonly>Use one line per signal in this format:
-Title | Detail | Source Label | Source URL
+Title | Detail | Source Label | Source URL | Next Step
 
 Example:
-State Farm promoted a new CDAO | Leadership change is making data and AI more central to digital strategy. | Company signal | https://example.com</textarea>
+State Farm promoted a new CDAO | Leadership change is making data and AI more central to digital strategy. | Company signal | https://example.com | Bring a consultant POV on data and AI execution support for the next meeting.</textarea>
     </div>
     <div class="form-field">
       <label for="account-reminders">Reminders For Next Meeting</label>
@@ -1319,10 +1351,23 @@ function enterWorkspace() {
     return;
   }
 
-  welcomeScreen.classList.add("hidden");
+  if (isEnteringWorkspace) {
+    return;
+  }
+
+  isEnteringWorkspace = true;
+  document.body.classList.add("workspace-entered");
   workspace.classList.remove("hidden");
+  workspace.classList.add("workspace-visible");
+  enterWorkspaceButton.textContent = "Opening...";
+
   activeView = { page: "Home" };
   renderPage();
+
+  window.setTimeout(() => {
+    welcomeScreen.classList.add("hidden");
+    isEnteringWorkspace = false;
+  }, 520);
 }
 
 async function init() {
