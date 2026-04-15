@@ -424,6 +424,16 @@ body {
   border: 1px solid var(--border);
 }
 
+.goal-box ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+.goal-box li {
+  margin-bottom: 8px;
+}
+
 .signal-item a {
   color: var(--text);
 }

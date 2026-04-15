@@ -17,6 +17,66 @@ const editForm = document.getElementById("edit-form");
 let state;
 let activeView = { page: "Home" };
 let connectionMode = "local";
+let meetingOutputState = {};
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function getMeetingOutput(accountId) {
+  return meetingOutputState[accountId] || {};
+}
+
+function buildTeamsMessage(account) {
+  return `Hi team, here is the ${account.name} monthly meeting prep. Key themes to reinforce: ${account.focus}. Biggest consultant POV: ${account.consultantPositioning} Next, I recommend we align on one proof-led follow-up, one stakeholder-specific talking point, and one immediate activation move coming out of the meeting.`;
+}
+
+function buildDeckBullets(account) {
+  return [
+    `Performance Snapshot: momentum is building in ${account.focus}, but credibility still needs stronger proof packaging.`,
+    `What Sales Should Do Next: lead with one clear point of view, one proof point, and one immediate next-step ask.`,
+    `Reminders To Bring Up: ${account.reminders.join(" | ")}`
+  ];
+}
+
+function renderMeetingOutputPanels(account) {
+  const output = getMeetingOutput(account.id);
+  if (!output.teamsMessage && !output.deckBullets) {
+    return "";
+  }
+
+  return `
+    <div class="goal-grid">
+      ${
+        output.teamsMessage
+          ? `
+            <article class="goal-box">
+              <span class="label">Generated Teams Message</span>
+              <p>${escapeHtml(output.teamsMessage)}</p>
+            </article>
+          `
+          : ""
+      }
+      ${
+        output.deckBullets
+          ? `
+            <article class="goal-box">
+              <span class="label">Generated 2-Slide Deck Notes</span>
+              <ul>
+                ${output.deckBullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+              </ul>
+            </article>
+          `
+          : ""
+      }
+    </div>
+  `;
+}
 
 function renderWelcomeCards() {
   welcomeGrid.innerHTML = state.welcome.summaryCards
@@ -493,12 +553,14 @@ function renderMeetingPage(accountId) {
             ${account.reminders.map((item) => `<li>${item}</li>`).join("")}
           </ul>
           <div class="actions-row">
-            <button class="primary-button" type="button">Generate Teams Message</button>
-            <button class="ghost-button" type="button">Generate 2-Slide Deck</button>
+            <button class="primary-button" data-generate-teams="${account.id}" type="button">Generate Teams Message</button>
+            <button class="ghost-button" data-generate-deck="${account.id}" type="button">Generate 2-Slide Deck</button>
           </div>
         </article>
       </div>
     </div>
+
+    ${renderMeetingOutputPanels(account)}
   `;
 }
 
@@ -649,9 +711,22 @@ function renderAutomationPage() {
         .join("")}
     </div>
     <article class="feature-card detail-section">
+      <div class="card-title-row">
+        <div>
+          <p class="eyebrow">Source Pulls</p>
+          <h3>What Needs To Be Connected</h3>
+        </div>
+        <span class="tag">${getConnectionModeLabel(connectionMode)}</span>
+      </div>
+      <ul>
+        <li>Airtable needs your base ID and API access so the app can read your Financial Services and Life Sciences boards.</li>
+        <li>Outlook and Teams need Microsoft Graph credentials and permissions for mail, meetings, and chat context.</li>
+        <li>HubSpot needs a private app token or OAuth connection for activity and performance context.</li>
+        <li>Until those are connected, this page can show the workflow but it cannot truly pull live source data.</li>
+      </ul>
       <div class="actions-row">
-        <button class="secondary-button" type="button">Run Monday Refresh</button>
-        <button class="ghost-button" type="button">Scan Sources</button>
+        <button class="secondary-button" data-open-automation-help="refresh" type="button">Run Monday Refresh</button>
+        <button class="ghost-button" data-open-automation-help="sources" type="button">Scan Sources</button>
       </div>
     </article>
   `;
@@ -713,6 +788,28 @@ function closeModal() {
   editModal.setAttribute("aria-hidden", "true");
   editForm.innerHTML = "";
   editForm.onsubmit = null;
+}
+
+function openAutomationHelp(mode) {
+  modalTitle.textContent = mode === "refresh" ? "Monday Refresh Requirements" : "Source Scan Requirements";
+  editForm.innerHTML = `
+    <div class="form-field">
+      <label>What has to be connected first</label>
+      <textarea readonly>${
+        mode === "refresh"
+          ? "To make Monday 7:00am refresh truly work, the app needs Supabase connected for storage plus Airtable, Outlook, Teams, HubSpot, and a news/data source connected through APIs or serverless functions."
+          : "To make source scans work, we need Airtable API access, Microsoft Graph access for Outlook and Teams, and HubSpot access. Right now the prototype is ready for the workflow, but it is not yet authenticated to those services."
+      }</textarea>
+    </div>
+    <div class="form-field">
+      <label>Next setup step</label>
+      <textarea readonly>Connect Supabase first, then add source credentials, then build the server-side sync functions that write fresh source data into the database.</textarea>
+    </div>
+    <div class="form-actions">
+      <button class="ghost-button" data-close-form type="button">Close</button>
+    </div>
+  `;
+  openModal();
 }
 
 async function saveAndRender(type, entityId) {
@@ -894,6 +991,36 @@ function refreshAccount(accountId) {
   renderPage();
 }
 
+function generateTeamsMessage(accountId) {
+  const account = state.accounts.find((item) => item.id === accountId);
+  if (!account) {
+    return;
+  }
+
+  meetingOutputState[accountId] = {
+    ...getMeetingOutput(accountId),
+    teamsMessage: buildTeamsMessage(account)
+  };
+
+  activeView = { page: "Meetings", accountId };
+  renderPage();
+}
+
+function generateDeck(accountId) {
+  const account = state.accounts.find((item) => item.id === accountId);
+  if (!account) {
+    return;
+  }
+
+  meetingOutputState[accountId] = {
+    ...getMeetingOutput(accountId),
+    deckBullets: buildDeckBullets(account)
+  };
+
+  activeView = { page: "Meetings", accountId };
+  renderPage();
+}
+
 function handlePageClick(event) {
   const navButton = event.target.closest("[data-page]");
   const pageButton = event.target.closest("[data-open-page]");
@@ -902,6 +1029,9 @@ function handlePageClick(event) {
   const editButton = event.target.closest("[data-edit-account]");
   const editChannelButton = event.target.closest("[data-edit-channel]");
   const editContentButton = event.target.closest("[data-edit-content]");
+  const generateTeamsButton = event.target.closest("[data-generate-teams]");
+  const generateDeckButton = event.target.closest("[data-generate-deck]");
+  const automationHelpButton = event.target.closest("[data-open-automation-help]");
   const refreshButton = event.target.closest("[data-refresh-account]");
   const cancelButton = event.target.closest("[data-close-form]");
 
@@ -941,6 +1071,21 @@ function handlePageClick(event) {
 
   if (editContentButton) {
     openContentEditor(editContentButton.dataset.editContent);
+    return;
+  }
+
+  if (generateTeamsButton) {
+    generateTeamsMessage(generateTeamsButton.dataset.generateTeams);
+    return;
+  }
+
+  if (generateDeckButton) {
+    generateDeck(generateDeckButton.dataset.generateDeck);
+    return;
+  }
+
+  if (automationHelpButton) {
+    openAutomationHelp(automationHelpButton.dataset.openAutomationHelp);
     return;
   }
 

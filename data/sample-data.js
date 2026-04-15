@@ -101,6 +101,24 @@ export const sampleData = {
           detail: "Position AI as governed enablement instead of experimentation.",
           sourceLabel: "Account Notes",
           sourceUrl: "#"
+        },
+        {
+          title: "Identity risk is becoming a sharper board-level conversation",
+          detail: "Tie your proof points to identity, access, and machine-identity control rather than broad cyber language.",
+          sourceLabel: "IG Blog: Identity Question",
+          sourceUrl: "https://insightglobal.com/blog/the-identity-question-every-financial-organization-should-ask-themselves/"
+        },
+        {
+          title: "Customer experience pressure is still shaping investment priorities",
+          detail: "Frame modernization and AI support around trust, efficiency, and smoother regulated customer experiences.",
+          sourceLabel: "IG Blog: CX in FS",
+          sourceUrl: "https://insightglobal.com/blog/customer-experience-in-financial-services/"
+        },
+        {
+          title: "2026 planning is shifting from foundation-building to leverage",
+          detail: "Bring a point of view on how Insight Global helps turn modernization work into operational gains now.",
+          sourceLabel: "IG Blog: 7 FS Trends",
+          sourceUrl: "https://insightglobal.com/blog/2026-financial-services-trends/"
         }
       ],
       notes: [
@@ -135,6 +153,24 @@ export const sampleData = {
           detail: "Position secure delivery discipline as part of the value proposition.",
           sourceLabel: "Current Signal",
           sourceUrl: "#"
+        },
+        {
+          title: "Insurance organizations are under simultaneous volatility, regulation, and cost pressure",
+          detail: "Lead with cost-safe execution and operational stability rather than abstract transformation messaging.",
+          sourceLabel: "IG Blog: Cost-Safe Insurance Ops",
+          sourceUrl: "https://insightglobal.com/blog/cost-safe-insurance-operations/"
+        },
+        {
+          title: "Claims spikes are a timely operational wedge",
+          detail: "Use surge staffing and follow-through language around stabilizing operations when claims volume surges.",
+          sourceLabel: "IG Blog: Stabilize Insurance Operations",
+          sourceUrl: "https://insightglobal.com/blog/how-to-stabilize-your-insurance-operations/"
+        },
+        {
+          title: "Compliant modernization for data and AI is now a practical insurance conversation",
+          detail: "Position data + AI as compliant modernization with strong controls, not experimental AI transformation.",
+          sourceLabel: "IG Blog: Compliant Modernization in Insurance",
+          sourceUrl: "https://insightglobal.com/blog/compliant-modernization-in-insurance/"
         }
       ],
       notes: [
@@ -169,6 +205,24 @@ export const sampleData = {
           detail: "Use screening and authenticity language as differentiators.",
           sourceLabel: "Account Strategy",
           sourceUrl: "#"
+        },
+        {
+          title: "Identity and access risk is becoming more visible in financial organizations",
+          detail: "Use this to reinforce fraud-first controls and compliant re-entry messaging.",
+          sourceLabel: "IG Blog: Identity Question",
+          sourceUrl: "https://insightglobal.com/blog/the-identity-question-every-financial-organization-should-ask-themselves/"
+        },
+        {
+          title: "Financial institutions are expecting leverage from earlier modernization investments",
+          detail: "Bring low-risk proof that shows how IG helps realize gains without adding procurement friction.",
+          sourceLabel: "IG Blog: 7 FS Trends",
+          sourceUrl: "https://insightglobal.com/blog/2026-financial-services-trends/"
+        },
+        {
+          title: "Fraud, AI, and customer trust are converging in buying conversations",
+          detail: "Keep the message narrow: safe execution, reliable consultants, and documented proof.",
+          sourceLabel: "IG Blog: CX in FS",
+          sourceUrl: "https://insightglobal.com/blog/customer-experience-in-financial-services/"
         }
       ],
       notes: [
@@ -203,6 +257,24 @@ export const sampleData = {
           detail: "Use it to differentiate from larger consulting competitors.",
           sourceLabel: "Account Summary",
           sourceUrl: "#"
+        },
+        {
+          title: "Optimization pressure is accelerating across life sciences operations",
+          detail: "Position J&J support around faster execution, fewer slowdowns, and more resilient delivery.",
+          sourceLabel: "IG Blog: Accelerating Innovation",
+          sourceUrl: "https://insightglobal.com/blog/life-sciences-accelerating-innovation/"
+        },
+        {
+          title: "AI and MedTech convergence is shaping 2026 planning",
+          detail: "Bring a practical point of view on where digital enablement supports R&D and manufacturing outcomes.",
+          sourceLabel: "IG Blog: LS Trends 2026",
+          sourceUrl: "https://insightglobal.com/blog/top-trends-shaping-life-sciences/"
+        },
+        {
+          title: "Innovation stories are landing best when tied to speed and optimization",
+          detail: "Use innovation language only when it leads back to operational readiness and scale.",
+          sourceLabel: "IG Blog: Innovation in Life Sciences",
+          sourceUrl: "https://insightglobal.com/blog/innovation-in-life-sciences/"
         }
       ],
       notes: [
@@ -237,6 +309,24 @@ export const sampleData = {
           detail: "Bring concrete next-step ideas rather than broad innovation language.",
           sourceLabel: "Account Notes",
           sourceUrl: "#"
+        },
+        {
+          title: "Optimization is becoming a competitive necessity in life sciences",
+          detail: "Tie your point of view to speed, quality, and process stability rather than just digital buzzwords.",
+          sourceLabel: "IG Blog: Accelerating Innovation",
+          sourceUrl: "https://insightglobal.com/blog/life-sciences-accelerating-innovation/"
+        },
+        {
+          title: "2026 trends are reinforcing AI, data, and compliance together",
+          detail: "Frame AI and digital support around practical adoption in regulated environments.",
+          sourceLabel: "IG Blog: LS Trends 2026",
+          sourceUrl: "https://insightglobal.com/blog/top-trends-shaping-life-sciences/"
+        },
+        {
+          title: "Innovation stories are landing best when tied to actual operating lift",
+          detail: "Use AI and digital acceleration language only when it clearly ties back to speed, throughput, and readiness.",
+          sourceLabel: "IG Blog: Innovation in Life Sciences",
+          sourceUrl: "https://insightglobal.com/blog/innovation-in-life-sciences/"
         }
       ],
       notes: [
@@ -355,9 +445,9 @@ export const sampleData = {
   contentAssets: [
     {
       id: "fs-ai-governance",
-      title: "AI Governance in Financial Services",
+      title: "7 Financial Services Trends to Watch This Year",
       industry: "Financial Services",
-      link: "https://insightglobal.com",
+      link: "https://insightglobal.com/blog/2026-financial-services-trends/",
       status: "Live",
       channels: ["Web", "Content & SEO", "Email & ABM"],
       score: "3/8",
@@ -365,23 +455,93 @@ export const sampleData = {
     },
     {
       id: "fraud-readiness",
-      title: "Fraud Readiness and Risk Protection",
+      title: "The identity question every financial organization should ask themselves",
       industry: "Financial Services",
-      link: "https://insightglobal.com",
+      link: "https://insightglobal.com/blog/the-identity-question-every-financial-organization-should-ask-themselves/",
       status: "Needed",
       channels: ["Content & SEO"],
       score: "1/8",
       gap: "This topic needs a stronger activation plan before monthly account meetings."
     },
     {
+      id: "fs-cx",
+      title: "Elevating the Customer Experience in Financial Services",
+      industry: "Financial Services",
+      link: "https://insightglobal.com/blog/customer-experience-in-financial-services/",
+      status: "Live",
+      channels: ["Web", "Email & ABM"],
+      score: "2/8",
+      gap: "Creative and Organic Social can help turn this into a stronger sales enablement asset."
+    },
+    {
+      id: "insurance-cost-safe",
+      title: "4 Cost-Safe Insurance Operations That Don’t Break Quality",
+      industry: "Insurance",
+      link: "https://insightglobal.com/blog/cost-safe-insurance-operations/",
+      status: "Live",
+      channels: ["Web", "Content & SEO"],
+      score: "2/8",
+      gap: "This should be activated into sales-facing talking points for State Farm."
+    },
+    {
+      id: "insurance-claims",
+      title: "5 Steps to Stabilize Your Operations When Claims Volumes Spike",
+      industry: "Insurance",
+      link: "https://insightglobal.com/blog/how-to-stabilize-your-insurance-operations/",
+      status: "Live",
+      channels: ["Web", "Content & SEO", "Email & ABM"],
+      score: "3/8",
+      gap: "Paid Media and Events & Field could extend this into a stronger State Farm support motion."
+    },
+    {
+      id: "insurance-ai",
+      title: "Compliant Modernization for Data and AI in Insurance",
+      industry: "Insurance",
+      link: "https://insightglobal.com/blog/compliant-modernization-in-insurance/",
+      status: "Live",
+      channels: ["Web", "Content & SEO", "Creative"],
+      score: "3/8",
+      gap: "Organic Social and Email & ABM are still open for activation."
+    },
+    {
+      id: "insurance-ai-value",
+      title: "Insurance AI Solutions That Are Delivering Real Value Now",
+      industry: "Insurance",
+      link: "https://insightglobal.com/blog/insurance-ai-solutions-that-are-delivering-real-value-now/",
+      status: "Needed",
+      channels: ["Content & SEO"],
+      score: "1/8",
+      gap: "This should be turned into a stronger data-and-AI talking point set for insurance accounts."
+    },
+    {
       id: "life-sciences-fsp",
-      title: "FSP and Manufacturing Readiness",
+      title: "Trends Shaping the Life Sciences Landscape in 2026",
       industry: "Life Sciences",
-      link: "https://insightglobal.com",
+      link: "https://insightglobal.com/blog/top-trends-shaping-life-sciences/",
       status: "Live",
       channels: ["Web", "Events & Field", "Creative"],
       score: "3/8",
       gap: "Organic Social and Email & ABM are still available activation moves."
+    },
+    {
+      id: "life-sciences-optimization",
+      title: "Accelerating Innovation in Life Sciences: The Race for Optimization",
+      industry: "Life Sciences",
+      link: "https://insightglobal.com/blog/life-sciences-accelerating-innovation/",
+      status: "Live",
+      channels: ["Web", "Content & SEO", "Email & ABM"],
+      score: "3/8",
+      gap: "Use this more directly in J&J and Eli Lilly consultant positioning."
+    },
+    {
+      id: "life-sciences-innovation",
+      title: "Innovation in Life Sciences: Where the Future is Heading",
+      industry: "Life Sciences",
+      link: "https://insightglobal.com/blog/innovation-in-life-sciences/",
+      status: "Live",
+      channels: ["Web", "Creative"],
+      score: "2/8",
+      gap: "Field and Email activation would make this much more useful in your meeting prep."
     }
   ],
   goals: [
