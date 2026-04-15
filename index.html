@@ -1,18 +1,86 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Amenitra's Command Center</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: 'Poppins', sans-serif; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <div class="app-shell">
+      <section class="welcome-screen" id="welcome-screen">
+        <div class="welcome-card">
+          <p class="eyebrow">Private Workspace</p>
+          <h1>Amenitra's Command Center</h1>
+          <h2>Hello Amenitra</h2>
+          <p class="welcome-copy">
+            You have 4 priority items, 2 launches to watch, and fresh account
+            signals ready for review before you head into the full workspace.
+          </p>
+
+          <div class="welcome-grid" id="welcome-grid"></div>
+
+          <button class="primary-button" id="enter-workspace">
+            Enter Command Center
+          </button>
+        </div>
+      </section>
+
+      <div class="workspace hidden" id="workspace">
+        <aside class="sidebar">
+          <div class="sidebar-brand">
+            <p class="sidebar-kicker">Amenitra's</p>
+            <h2>Command Center</h2>
+            <p class="sidebar-subtitle">Marketing strategy workspace</p>
+          </div>
+
+          <nav class="sidebar-nav" id="sidebar-nav"></nav>
+
+          <div class="sidebar-footer">
+            <p class="footer-label">Co-Work Status</p>
+            <div class="status-list">
+              <span class="status-pill">Airtable Ready</span>
+              <span class="status-pill">Outlook Planned</span>
+              <span class="status-pill">Teams Planned</span>
+              <span class="status-pill">HubSpot Planned</span>
+            </div>
+          </div>
+        </aside>
+
+        <main class="main-content">
+          <header class="topbar">
+            <div>
+              <p class="eyebrow">Welcome Back</p>
+              <h1 id="page-title">Home</h1>
+            </div>
+            <div class="quote-card" id="quote-card"></div>
+          </header>
+
+          <section class="page-section" id="page-content"></section>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal hidden" id="edit-modal" aria-hidden="true">
+      <div class="modal-backdrop" id="modal-backdrop"></div>
+      <div class="modal-panel">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Edit Workspace Content</p>
+            <h2 id="modal-title">Edit</h2>
+          </div>
+          <button class="ghost-button" id="close-modal" type="button">Close</button>
+        </div>
+        <form class="modal-form" id="edit-form"></form>
+      </div>
+    </div>
+
+    <script type="module" src="./app.js"></script>
   </body>
 </html>
