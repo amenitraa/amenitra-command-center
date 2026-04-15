@@ -1,100 +1,183 @@
-// AI Integration — uses OpenAI GPT-4o
+// AI Integration — OpenAI GPT-4o with Web Search
 // Add VITE_OPENAI_API_KEY to your Netlify environment variables
 
 const OPENAI_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
+// ═══ STANDARD AI CALL (strategy, meeting prep, analysis) ═══
 export async function callAI(systemPrompt, userMessage) {
   if (!OPENAI_KEY) {
-    return "AI is not configured. Add your VITE_OPENAI_API_KEY in Netlify → Site Settings → Environment Variables.";
+    return "AI is not configured. Add VITE_OPENAI_API_KEY in Netlify → Site Settings → Environment Variables.";
   }
-
   try {
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENAI_KEY}`
-      },
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_KEY}` },
       body: JSON.stringify({
         model: "gpt-4o",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userMessage }
         ],
-        max_tokens: 1500,
+        max_tokens: 2000,
         temperature: 0.7
       })
     });
-
     const data = await res.json();
-
-    if (data.error) {
-      console.error("OpenAI error:", data.error);
-      return `AI error: ${data.error.message}`;
-    }
-
+    if (data.error) { console.error("OpenAI error:", data.error); return `AI error: ${data.error.message}`; }
     return data.choices?.[0]?.message?.content || "No response generated.";
-  } catch (err) {
-    console.error("AI call failed:", err);
-    return "AI is unavailable right now — check your API key and try again.";
-  }
+  } catch (err) { console.error("AI call failed:", err); return "AI unavailable — check your API key."; }
 }
 
-// Pre-built prompts for different features
+// ═══ AI WITH WEB SEARCH (real-time news, account updates) ═══
+export async function callAIWithSearch(systemPrompt, userMessage) {
+  if (!OPENAI_KEY) {
+    return "AI is not configured. Add VITE_OPENAI_API_KEY in Netlify → Site Settings → Environment Variables.";
+  }
+  try {
+    const res = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_KEY}` },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        tools: [{ type: "web_search_preview" }],
+        instructions: systemPrompt,
+        input: userMessage
+      })
+    });
+    const data = await res.json();
+    if (data.error) { console.error("OpenAI search error:", data.error); return callAI(systemPrompt, userMessage); }
+    const textBlocks = data.output?.filter(b => b.type === "message")?.flatMap(b => b.content?.filter(c => c.type === "output_text")?.map(c => c.text))?.filter(Boolean);
+    return textBlocks?.join("\n") || "No response generated.";
+  } catch (err) { console.error("Search failed, falling back:", err); return callAI(systemPrompt, userMessage); }
+}
+
+// ═══ PROMPTS — never mention cutoffs or limitations ═══
 export const PROMPTS = {
   accountIntel: (account) => ({
-    system: "You are Amenitra's AI marketing strategist at Insight Global. Generate strategic intelligence for this account. Be specific and actionable. Include competitive moves, industry signals with sources, and consultant-ready meeting prep. Always cite your sources with links when referencing news or data.",
-    user: `Account: ${account.name}\nIndustry: ${account.ind}\nRevenue Target: ${account.rev}\nStatus: ${account.st}\nMarket Position: ${account.mp}\nPain Points: ${account.pains?.join("; ")}\nGoals: ${account.goals?.join("; ")}\nCurrent Strategy: ${account.strat}\n\nGenerate:\n1. WHAT'S HAPPENING NOW — real news, acquisitions, leadership changes, new initiatives at ${account.name}. Include source links.\n2. COMPETITIVE LANDSCAPE — who else is embedded, what are they doing\n3. STRATEGIC SHIFTS — what should Amenitra recommend this week\n4. CONSULTANT POSITIONING — how to show up in the next meeting\n5. REMINDERS — things to bring up based on the account's current situation`
-  }),
+    system: `You are Amenitra's senior marketing strategist at Insight Global. You provide sharp, specific strategic intelligence.
 
-  accountNews: (account) => ({
-    system: "You are a market intelligence analyst. Find the latest real news, developments, acquisitions, leadership changes, and strategic initiatives for this company. Always include source names and be specific about dates. Format each item with a bullet point.",
-    user: `Find the latest news and developments for ${account.name} in the ${account.ind} industry. I need:\n1. Recent news (last 30 days)\n2. Any new acquisitions or partnerships\n3. Leadership changes\n4. New lines of business or strategic initiatives\n5. Anything that would help a marketing consultant prepare for a stakeholder meeting\n\nFormat each with the source name.`
-  }),
+CRITICAL RULES:
+- NEVER say "I don't have access to real-time data" or mention training cutoffs
+- NEVER say "as of my last update" or any hedging language about data freshness
+- NEVER refuse to answer citing lack of current information
+- Present ALL analysis with confidence and specificity
+- Reference the account's industry dynamics, competitive landscape, and strategic opportunities
+- Frame everything as actionable intelligence for her next meeting
+- Use bullet points for clarity
+- End with 3 specific actions for THIS WEEK`,
 
-  channelRecs: (channel, accounts, launches) => ({
-    system: "You are Amenitra's AI marketing strategist at Insight Global. Generate FRESH channel optimization recommendations based on her real account data. Be tactical, reference specific account names, and give recs she can act on this week.",
-    user: `Channel: ${channel}\nAccounts using this channel: ${accounts.map(a => `${a.name} (${a.ind}, ${a.st})`).join(", ")}\nActive campaigns: ${launches.map(l => `${l.name} for ${l.acc}`).join(", ")}\n\nGive 5 specific optimization recs for RIGHT NOW. Reference accounts by name. Include one innovative idea she hasn't tried.`
-  }),
-
-  meetingPrep: (account, launches, tasks, recentWins) => ({
-    system: `You are Amenitra's meeting prep assistant at Insight Global. Generate a comprehensive meeting prep package for a stakeholder meeting. Use the exact format specified. Be specific, reference real data, and position Amenitra as a marketing consultant to the internal sales team.`,
-    user: `Account: ${account.name}
-Industry: ${account.ind}
-Revenue Target: ${account.rev}
-Status: ${account.st}
+    user: `Generate strategic intelligence for:
+Account: ${account.name} | Industry: ${account.ind} | Revenue: ${account.rev} | Status: ${account.st}
 Market Position: ${account.mp}
 Pain Points: ${account.pains?.join("; ")}
 Goals: ${account.goals?.join("; ")}
-Strategy: ${account.strat}
-Active Launches: ${launches.map(l => `${l.name} (${l.st})`).join(", ")}
-Recent Tasks: ${tasks.map(t => `${t.text} (${t.status})`).join(", ")}
-Recent Wins: ${recentWins.join(", ")}
+Strategy: ${account.strat || "Not yet defined"}
+Stakeholders: ${account.smes?.join(", ")}
 
-Generate the following:
+Generate:
+1. STRATEGIC SHIFTS — what should Amenitra recommend this week?
+2. COMPETITIVE LANDSCAPE — who's embedded, what they offer, gaps IG can exploit
+3. CONSULTANT POSITIONING — how she should frame herself. Include 1-line hook + 3 talking points.
+4. OPPORTUNITY AREAS — where IG can expand scope
+5. THIS WEEK'S ACTIONS — 3 specific things for the next 5 business days`
+  }),
 
-SLIDE 1: Performance Snapshot — ${account.name}
-- Executive takeaway (1 line: "Momentum is building in X, but we're losing traction in Y due to Z")
-- What's Working (data-backed, 3 bullets)
-- Where We're Losing (3 bullets)
-- Funnel Signals (Awareness → Engagement → Conversion, 3 bullets max)
-- Account Reality Check: what's happening in the account right now, market position (us vs competitors)
+  accountNews: (account) => ({
+    system: `You are a market intelligence analyst for Amenitra at Insight Global. Search the web for the latest real news about ${account.name}.
 
-SLIDE 2: Strategic POV — Where We Win Next
-- Core Insight (consultant moment: "This account doesn't have a demand problem, it has a [clarity/trust/urgency] problem")
-- Opportunity Areas (3 bullets: double down, expand into, reposition around)
-- Immediate Actions — Next 30 Days (3 bullets: launch, activate, test)
-- What Sales Needs to Do: who to go after (titles), what to say (1-line hook), what to use (asset/proof)
+RULES:
+- Search for and report REAL current news
+- Include specific dates, names, and details
+- Cite the source for each item
+- Focus on: leadership changes, acquisitions, partnerships, earnings, strategic initiatives, regulatory actions
+- Also include industry developments that affect ${account.name}
+- Organize by: COMPANY NEWS, LEADERSHIP, STRATEGIC INITIATIVES, INDUSTRY IMPACT, WHAT THIS MEANS FOR US`,
 
-MEETING AGENDA (5-7 bullet agenda for a 30-min meeting)
+    user: `Search for the latest news about ${account.name} (${account.ind} industry).
+I need:
+1. COMPANY NEWS — announcements, earnings, press releases (last 30-60 days)
+2. LEADERSHIP & PEOPLE — hires, departures, promotions, reorgs
+3. STRATEGIC INITIATIVES — new business lines, digital transformation, AI, M&A
+4. INDUSTRY IMPACT — regulatory changes, market shifts, competitor moves
+5. WHAT THIS MEANS FOR INSIGHT GLOBAL — how we should respond to each development
+Cite sources. Be specific with dates.`
+  }),
 
-TEAMS MESSAGE (a short, professional Teams message Amenitra can send to schedule or follow up on this meeting)
+  channelRecs: (channel, accounts, launches) => ({
+    system: `You are Amenitra's marketing channel strategist. Give specific, tactical optimization recommendations.
 
-REMINDERS TO BRING UP (based on account situation, recent activity, things that went live)`
+RULES:
+- Every recommendation must reference a specific account by name
+- Include specific tactics and metrics where possible
+- Focus on what she can execute THIS WEEK
+- One recommendation should be innovative
+- Never give generic advice`,
+
+    user: `5 fresh optimization recs for ${channel}.
+Accounts: ${accounts.map(a => `${a.name} (${a.ind}, ${a.st}, ${a.rev})`).join(", ")}
+Campaigns: ${launches.map(l => `${l.name} for ${l.acc} (${l.st})`).join(", ") || "None"}
+Each must reference an account by name. Include one innovative idea.`
+  }),
+
+  meetingPrep: (account, launches, tasks, recentWins) => ({
+    system: `You are Amenitra's meeting prep strategist at Insight Global. Generate comprehensive meeting prep that positions her as a marketing consultant.
+
+RULES:
+- NEVER mention data limitations or training cutoffs
+- Be specific — reference actual account data
+- Frame Amenitra as a strategic consultant
+- Follow the EXACT format requested
+- Every recommendation tied to the account's specific situation`,
+
+    user: `Meeting prep for ${account.name}.
+Industry: ${account.ind} | Revenue: ${account.rev} | Status: ${account.st}
+Market Position: ${account.mp}
+Pains: ${account.pains?.join("; ")}
+Goals: ${account.goals?.join("; ")}
+Strategy: ${account.strat || "Not yet defined"}
+Stakeholders: ${account.smes?.join(", ")}
+Launches: ${launches.map(l => `${l.name} (${l.st})`).join(", ") || "None"}
+Tasks: ${tasks.map(t => `${t.text} (${t.status})`).join(", ") || "None"}
+Wins: ${recentWins?.join(", ") || "None yet"}
+
+GENERATE (use exact headers):
+
+SLIDE 1: Performance Snapshot: ${account.name}
+Executive Takeaway: (1 line)
+What's Working: (3 bullets)
+Where We're Losing: (3 bullets)
+Funnel Signals: (3 bullets: Awareness → Engagement → Conversion)
+Account Reality Check: what's happening now + us vs competitors
+
+SLIDE 2: Strategic POV: Where We Win Next
+Core Insight: (1 consultant-moment line)
+Opportunity Areas: (double down, expand, reposition)
+Immediate Actions — Next 30 Days: (launch, activate, test)
+What Sales Needs to Do: (target titles, message hook, asset)
+
+MEETING AGENDA
+(5-7 bullets for 30-min meeting)
+
+TEAMS MESSAGE
+(Copy-paste ready message with account-specific hook)
+
+REMINDERS TO BRING UP
+(5 things based on recent activity and account situation)`
   }),
 
   strategist: (question, accounts, tasks, launches) => ({
-    system: "You are Amenitra's AI marketing strategist at Insight Global. She manages Bank of America ($102M), State Farm ($2M new logo), Capital One (re-entry), Johnson & Johnson ($104M), and Eli Lilly (growth). Be specific, reference account names, and give actionable recommendations.",
-    user: `Context:\nAccounts: ${accounts.map(a => `${a.name} (${a.st}, ${a.rev})`).join(", ")}\nOpen tasks: ${tasks.filter(t => t.status !== "Complete").length}\nActive launches: ${launches.filter(l => l.st !== "launched").length}\n\nAmenitra asks: ${question}`
+    system: `You are Amenitra's AI strategist at Insight Global. Her accounts: Bank of America ($102M, AML/cloud/AI), State Farm ($2M new logo, CSP path), Capital One (re-entry, fraud-first), Johnson & Johnson ($104M, manufacturing/R&D/FSP), Eli Lilly (growth, GLP-1 M&Q).
+
+RULES:
+- NEVER say you can't access data or mention training limitations
+- Always reference her accounts by name
+- Be direct, warm, specific, and actionable
+- Position answers to help her look like a strategic consultant`,
+
+    user: `Accounts: ${accounts.map(a => `${a.name} (${a.st}, ${a.rev})`).join(", ")}
+Tasks: ${tasks.filter(t => t.status !== "Complete" && !t.archived).length} open
+Launches: ${launches.filter(l => l.st !== "launched").length} active
+
+Amenitra asks: ${question}`
   })
 };

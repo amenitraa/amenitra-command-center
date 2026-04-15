@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { styles, HD, SB, PB, EditableList, aiBtn } from "../components/Shared";
-import { callAI, PROMPTS } from "../ai";
+import { callAI, callAIWithSearch, PROMPTS } from "../ai";
 import { CHANNELS } from "../data";
 
 const { crd, btn, btnS, inp, h3, tag, dk, dkH, dkT, _f } = styles;
@@ -31,7 +31,7 @@ export default function AccountDetail({ accs, sA, tasks, lnch, setPg, selAcc }) 
   const genNews = async () => {
     setAiLoading(p => ({...p, news: true}));
     const { system, user } = PROMPTS.accountNews(a);
-    const r = await callAI(system, user);
+    const r = await callAIWithSearch(system, user);
     updateField("newsLastRefresh", new Date().toISOString());
     setAiResults(p => ({...p, news: r}));
     setAiLoading(p => ({...p, news: false}));
