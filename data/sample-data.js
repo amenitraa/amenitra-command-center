@@ -770,6 +770,26 @@ export const sampleData = {
       note: "Will feed account activity and performance context for meeting prep."
     }
   ],
+  integrationSettings: [
+    {
+      name: "Airtable",
+      status: "Ready for setup",
+      summary: "Connect your industry and account boards so Airtable can feed Supabase.",
+      lastSyncedAt: ""
+    },
+    {
+      name: "Outlook / Teams",
+      status: "Planned",
+      summary: "Will require Microsoft Graph credentials and permissions.",
+      lastSyncedAt: ""
+    },
+    {
+      name: "HubSpot",
+      status: "Planned",
+      summary: "Will require a HubSpot private app token or OAuth connection.",
+      lastSyncedAt: ""
+    }
+  ],
   placeholders: {
     strategyLab: {
       title: "Strategy Lab",

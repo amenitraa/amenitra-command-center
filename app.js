@@ -935,6 +935,24 @@ function renderAutomationPage() {
         )
         .join("")}
     </div>
+    <div class="section-header">
+      <h2>Integration Setup</h2>
+      <span class="tag">Supabase-Backed</span>
+    </div>
+    <div class="goal-grid">
+      ${state.integrationSettings
+        .map(
+          (item) => `
+            <article class="goal-box">
+              <span class="label">${item.status}</span>
+              <h3>${item.name}</h3>
+              <p>${item.summary}</p>
+              <p class="meta">${item.lastSyncedAt ? `Last synced: ${item.lastSyncedAt}` : "No sync has run yet."}</p>
+            </article>
+          `
+        )
+        .join("")}
+    </div>
     <article class="feature-card detail-section">
       <div class="card-title-row">
         <div>
@@ -944,7 +962,7 @@ function renderAutomationPage() {
         <span class="tag">${getConnectionModeLabel(connectionMode)}</span>
       </div>
       <ul>
-        <li>Airtable needs your base ID and API access so the app can read your Financial Services and Life Sciences boards.</li>
+        <li>Airtable needs your base ID, table/view names, and API access so the app can read your Financial Services and Life Sciences industry/account boards.</li>
         <li>Outlook and Teams need Microsoft Graph credentials and permissions for mail, meetings, and chat context.</li>
         <li>HubSpot needs a private app token or OAuth connection for activity and performance context.</li>
         <li>Until those are connected, this page can show the workflow but it cannot truly pull live source data.</li>

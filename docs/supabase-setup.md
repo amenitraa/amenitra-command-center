@@ -12,6 +12,9 @@ This project can now run in two modes:
 - `data/supabase-config.js`
 - `data/supabase-config.example.js`
 - `supabase/schema.sql`
+- `supabase/migrate-strategy-and-integrations.sql`
+- `supabase/seed-accounts.sql`
+- `supabase/seed-strategy-and-integrations.sql`
 
 ## Setup Steps
 
@@ -21,6 +24,14 @@ This project can now run in two modes:
 4. Copy `data/supabase-config.example.js` to `data/supabase-config.js`.
 5. Replace the placeholder values with your real project URL and anon key.
 6. Set `enabled: true`.
+
+## If You Already Ran The Earlier Schema
+
+Run these additional SQL files in order:
+
+1. `supabase/migrate-strategy-and-integrations.sql`
+2. `supabase/seed-accounts.sql`
+3. `supabase/seed-strategy-and-integrations.sql`
 
 ## Important Notes
 
