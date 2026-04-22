@@ -21,8 +21,10 @@ A private single-user marketing workspace for account strategy, meeting prep, ch
 - `docs/supabase-setup.md` - how to connect this app to Supabase
 - `docs/airtable-sync-plan.md` - mapping for Airtable tables and records
 - `docs/airtable-sync-setup.md` - how to run Airtable sync safely through Netlify
+- `docs/market-intelligence-setup.md` - how to run live news and market-intelligence sync
 - `supabase/schema.sql` - starter database schema for the Supabase version
 - `supabase/migrate-airtable-sync.sql` - extra columns used by the Airtable sync scaffold
+- `supabase/migrate-market-intelligence.sql` - live market-watch table for current signals and pain hierarchy
 - `.env.example` - integration environment variable template
 - `netlify.toml` - basic Netlify publish config
 
@@ -77,3 +79,18 @@ To finish setup:
 2. add the required environment variables in Netlify
 3. deploy
 4. call `/.netlify/functions/airtable-sync`
+
+## Market Intelligence Sync
+
+The repo also includes a live market-intelligence sync scaffold that writes linked news items into Supabase for:
+
+- account `Current Signals`
+- account `Pain Hierarchy`
+- industry war room `Current Signals`
+- industry war room `Pain Hierarchy`
+
+To finish setup:
+
+1. run `supabase/migrate-market-intelligence.sql`
+2. deploy
+3. call `/.netlify/functions/market-intelligence-sync`

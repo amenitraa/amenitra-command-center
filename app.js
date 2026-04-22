@@ -155,11 +155,12 @@ function renderMeetingOutputPanels(account) {
 }
 
 function renderSignalSource(signal) {
+  const published = signal.publishedAt ? ` • ${new Date(signal.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}` : "";
   if (!signal.sourceUrl || signal.sourceUrl === "#") {
-    return `<p class="meta">${escapeHtml(signal.sourceLabel)} • Link to source still needed</p>`;
+    return `<p class="meta">${escapeHtml(signal.sourceLabel)}${published} • Link to source still needed</p>`;
   }
 
-  return `<p class="meta"><a href="${signal.sourceUrl}" target="_blank" rel="noreferrer">${escapeHtml(signal.sourceLabel)}</a></p>`;
+  return `<p class="meta"><a href="${signal.sourceUrl}" target="_blank" rel="noreferrer">${escapeHtml(signal.sourceLabel)}</a>${published}</p>`;
 }
 
 function normalizeSignal(signal, account) {
@@ -174,7 +175,8 @@ function normalizeSignal(signal, account) {
     whyItMatters,
     sourceLabel: signal.sourceLabel || "Source",
     sourceUrl: signal.sourceUrl || "#",
-    nextStep: deriveSignalNextStep(signal, account)
+    nextStep: deriveSignalNextStep(signal, account),
+    publishedAt: signal.publishedAt || ""
   };
 }
 
@@ -228,7 +230,11 @@ function normalizePain(pain, account) {
   return {
     issue: pain.issue || "",
     whyItMatters: pain.whyItMatters || derivePainWhyItMatters(pain.issue || ""),
-    response: pain.response || derivePainResponse(pain.issue || "", account)
+    response: pain.response || derivePainResponse(pain.issue || "", account),
+    sourceLabel: pain.sourceLabel || "Source",
+    sourceUrl: pain.sourceUrl || "#",
+    summary: pain.summary || "",
+    publishedAt: pain.publishedAt || ""
   };
 }
 
@@ -618,6 +624,8 @@ function renderWarRoomDetail(entity, options = {}) {
                     <span class="pain-rank">#${index + 1}</span>
                     <div class="pain-body">
                       <p><strong>${pain.issue}</strong></p>
+                      ${pain.summary ? `<p class="meta"><strong>Summary:</strong> ${pain.summary}</p>` : ""}
+                      ${renderSignalSource(pain)}
                       <p class="meta"><strong>Why it matters:</strong> ${pain.whyItMatters}</p>
                       <p class="meta"><strong>How to respond:</strong> ${pain.response}</p>
                     </div>
