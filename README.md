@@ -19,7 +19,10 @@ A private single-user marketing workspace for account strategy, meeting prep, ch
 - `data/supabase-config.js` - browser-side Supabase connection config
 - `docs/technical-spec.md` - build-ready product and engineering spec
 - `docs/supabase-setup.md` - how to connect this app to Supabase
+- `docs/airtable-sync-plan.md` - mapping for Airtable tables and records
+- `docs/airtable-sync-setup.md` - how to run Airtable sync safely through Netlify
 - `supabase/schema.sql` - starter database schema for the Supabase version
+- `supabase/migrate-airtable-sync.sql` - extra columns used by the Airtable sync scaffold
 - `.env.example` - integration environment variable template
 - `netlify.toml` - basic Netlify publish config
 
@@ -56,3 +59,21 @@ That means:
 ## Notes
 
 This version is intentionally single-user and does not include authentication.
+
+## Airtable Sync
+
+The repo now includes a server-side Airtable sync scaffold for Netlify Functions.
+
+It is designed to:
+
+- read `Industry Campaign`
+- read `Tasks`
+- write mapped launches and tasks into Supabase
+- keep Airtable credentials out of the browser
+
+To finish setup:
+
+1. run `supabase/migrate-airtable-sync.sql`
+2. add the required environment variables in Netlify
+3. deploy
+4. call `/.netlify/functions/airtable-sync`

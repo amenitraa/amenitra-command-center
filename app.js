@@ -156,10 +156,80 @@ function renderMeetingOutputPanels(account) {
 
 function renderSignalSource(signal) {
   if (!signal.sourceUrl || signal.sourceUrl === "#") {
-    return `<p class="meta">${escapeHtml(signal.sourceLabel)}</p>`;
+    return `<p class="meta">${escapeHtml(signal.sourceLabel)} • Link to source still needed</p>`;
   }
 
-  return `<p class="meta"><a href="${signal.sourceUrl}">${escapeHtml(signal.sourceLabel)}</a></p>`;
+  return `<p class="meta"><a href="${signal.sourceUrl}" target="_blank" rel="noreferrer">${escapeHtml(signal.sourceLabel)}</a></p>`;
+}
+
+function normalizeSignal(signal, account) {
+  const summary = signal.summary || signal.detail || "";
+  const whyItMatters =
+    signal.whyItMatters ||
+    `This matters because it changes how ${account.name} will evaluate urgency, risk, or value in the next conversation.`;
+
+  return {
+    title: signal.title,
+    summary,
+    whyItMatters,
+    sourceLabel: signal.sourceLabel || "Source",
+    sourceUrl: signal.sourceUrl || "#",
+    nextStep: deriveSignalNextStep(signal, account)
+  };
+}
+
+function derivePainWhyItMatters(pain) {
+  const value = String(typeof pain === "string" ? pain : pain.issue || "");
+  if (value.toLowerCase().includes("trust") || value.toLowerCase().includes("procurement")) {
+    return "If this is not handled carefully, good ideas will still stall because the account will feel internal risk in saying yes.";
+  }
+
+  if (value.toLowerCase().includes("ai") || value.toLowerCase().includes("data") || value.toLowerCase().includes("analytics")) {
+    return "This is where a lot of accounts say they want innovation, but really need disciplined execution, clearer use cases, and delivery confidence.";
+  }
+
+  if (value.toLowerCase().includes("claims") || value.toLowerCase().includes("underwriting") || value.toLowerCase().includes("operations")) {
+    return "This is tied to day-to-day business pressure, so it gives you a much more practical wedge than broad future-state messaging.";
+  }
+
+  if (value.toLowerCase().includes("manufacturing") || value.toLowerCase().includes("quality") || value.toLowerCase().includes("r&d")) {
+    return "This affects readiness and throughput, which makes it one of the most credible places to show strategic value through execution support.";
+  }
+
+  return "This pain point matters because it shapes what stakeholders will prioritize, what language will resonate, and where your next recommendation should land.";
+}
+
+function derivePainResponse(pain, account) {
+  const value = String(typeof pain === "string" ? pain : pain.issue || "").toLowerCase();
+  if (value.includes("trust") || value.includes("procurement")) {
+    return `Respond with low-risk language, one clean proof point, and a next step that feels easy to defend inside ${account.name}.`;
+  }
+
+  if (value.includes("ai") || value.includes("data") || value.includes("analytics")) {
+    return `Anchor the response in governed execution and what Insight Global can help move from interest to implementation in ${account.name}.`;
+  }
+
+  if (value.includes("claims") || value.includes("underwriting") || value.includes("operations")) {
+    return `Tie your recommendation to throughput, stability, and workload relief so the value feels immediate and operational.`;
+  }
+
+  return `Use this pain point to sharpen the meeting agenda, bring a more specific point of view, and recommend one immediate follow-up action tied to ${account.focus}.`;
+}
+
+function normalizePain(pain, account) {
+  if (typeof pain === "string") {
+    return {
+      issue: pain,
+      whyItMatters: derivePainWhyItMatters(pain),
+      response: derivePainResponse(pain, account)
+    };
+  }
+
+  return {
+    issue: pain.issue || "",
+    whyItMatters: pain.whyItMatters || derivePainWhyItMatters(pain.issue || ""),
+    response: pain.response || derivePainResponse(pain.issue || "", account)
+  };
 }
 
 function deriveSignalNextStep(signal, account) {
@@ -190,7 +260,18 @@ function deriveSignalNextStep(signal, account) {
 
 function formatSignalsForEditor(signals) {
   return signals
-    .map((signal) => [signal.title, signal.detail, signal.sourceLabel, signal.sourceUrl, signal.nextStep || ""].map((item) => item || "").join(" | "))
+    .map((signal) =>
+      [
+        signal.title,
+        signal.summary || signal.detail || "",
+        signal.whyItMatters || "",
+        signal.sourceLabel,
+        signal.sourceUrl,
+        signal.nextStep || ""
+      ]
+        .map((item) => item || "")
+        .join(" | ")
+    )
     .join("\n");
 }
 
@@ -200,13 +281,17 @@ function parseSignalsFromEditor(value) {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => {
-      const [title = "", detail = "", sourceLabel = "Source", sourceUrl = "#", nextStep = ""] = line.split("|").map((item) => item.trim());
+      const parts = line.split("|").map((item) => item.trim());
+      const [title = "", summaryOrDetail = "", maybeWhyOrSource = "", maybeSourceLabel = "", maybeSourceUrl = "", maybeNextStep = ""] = parts;
+      const usingLegacyFormat = parts.length <= 5;
       return {
         title,
-        detail,
-        sourceLabel: sourceLabel || "Source",
-        sourceUrl: sourceUrl || "#",
-        nextStep: nextStep || ""
+        detail: summaryOrDetail,
+        summary: summaryOrDetail,
+        whyItMatters: usingLegacyFormat ? "" : maybeWhyOrSource,
+        sourceLabel: usingLegacyFormat ? maybeWhyOrSource || "Source" : maybeSourceLabel || "Source",
+        sourceUrl: usingLegacyFormat ? maybeSourceLabel || "#" : maybeSourceUrl || "#",
+        nextStep: usingLegacyFormat ? maybeSourceUrl || "" : maybeNextStep || ""
       };
     })
     .filter((signal) => signal.title && signal.detail);
@@ -247,6 +332,38 @@ function renderQuote() {
 
 function renderHomePage() {
   pageContent.innerHTML = `
+    <section class="command-hero">
+      <article class="feature-card hero-primary">
+        <p class="eyebrow">Command Briefing</p>
+        <h2>Operate like the consultant today and the Senior Brand Manager before the title arrives.</h2>
+        <p>${state.growthTrack.corePurpose}</p>
+        <div class="actions-row">
+          <button class="secondary-button" data-open-page="Growth Lab" type="button">Open Growth Lab</button>
+          <button class="ghost-button" data-open-page="Amenitra's Notes" type="button">Open Your Notes</button>
+        </div>
+      </article>
+      <article class="feature-card hero-secondary">
+        <div class="section-header">
+          <h2>North Star This Week</h2>
+          <span class="tag">Dual Track</span>
+        </div>
+        <div class="list-stack">
+          <div class="list-item">
+            <strong>Current role</strong>
+            <p>${state.growthTrack.currentRoleMoves[0]}</p>
+          </div>
+          <div class="list-item">
+            <strong>Next role</strong>
+            <p>${state.growthTrack.nextRoleBehaviors[0]}</p>
+          </div>
+          <div class="list-item">
+            <strong>Build proof</strong>
+            <p>${state.growthTrack.weeklyActions[0]}</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
     <div class="overview-grid">
       ${state.overviewCards
         .map(
@@ -305,6 +422,24 @@ function renderHomePage() {
             .join("")}
         </div>
       </article>
+    </div>
+
+    <div class="section-header">
+      <h2>Industry Watch</h2>
+      <button class="secondary-button" data-open-page="Industry War Rooms" type="button">Open Industry War Rooms</button>
+    </div>
+    <div class="goal-grid">
+      ${state.industryWarRooms
+        .map(
+          (room) => `
+            <article class="goal-box">
+              <span class="label">${room.subline}</span>
+              <h3>${room.name}</h3>
+              <p>${room.northStar}</p>
+            </article>
+          `
+        )
+        .join("")}
     </div>
     <div class="section-header">
       <h2>Accounts Snapshot</h2>
@@ -378,6 +513,25 @@ function renderHomePage() {
         <button class="ghost-button" data-open-page="Meetings" type="button">Open Meeting Workspace</button>
       </div>
     </article>
+
+    <div class="section-header">
+      <h2>Amenitra's Thoughts</h2>
+      <button class="ghost-button" data-edit-thoughts="open" type="button">Edit</button>
+    </div>
+    <div class="goal-grid">
+      <article class="goal-box">
+        <span class="label">Current Thinking</span>
+        <p>${state.thoughtsHub.currentThinking}</p>
+      </article>
+      <article class="goal-box">
+        <span class="label">Next Steps</span>
+        <p>${state.thoughtsHub.nextSteps}</p>
+      </article>
+      <article class="goal-box">
+        <span class="label">Experiments</span>
+        <p>${state.thoughtsHub.experiments}</p>
+      </article>
+    </div>
   `;
 }
 
@@ -465,12 +619,14 @@ function renderAccountDetailPage(accountId) {
           </div>
           <div class="signal-list">
             ${account.signals
+              .map((signal) => normalizeSignal(signal, account))
               .map(
                 (signal) => `
                   <div class="signal-item signal-item-accent">
                     <strong>${signal.title}</strong>
-                    <p>${signal.detail}</p>
+                    <p><span class="label">Summary</span> ${signal.summary}</p>
                     ${renderSignalSource(signal)}
+                    <p class="meta"><strong>Why it matters:</strong> ${escapeHtml(signal.whyItMatters)}</p>
                     <div class="signal-next-step">
                       <span class="label">How We Stay Relevant</span>
                       <p>${escapeHtml(deriveSignalNextStep(signal, account))}</p>
@@ -493,11 +649,14 @@ function renderAccountDetailPage(accountId) {
           </div>
           <div class="pain-stack">
             ${account.painHierarchy
+              .map((pain) => normalizePain(pain, account))
               .map(
                 (pain, index) => `
                   <div class="pain-item">
                     <span class="pain-rank">#${index + 1}</span>
-                    <p>${pain}</p>
+                    <p><strong>${pain.issue}</strong></p>
+                    <p class="meta"><strong>Why it matters:</strong> ${pain.whyItMatters}</p>
+                    <p class="meta"><strong>How to respond:</strong> ${pain.response}</p>
                   </div>
                 `
               )
@@ -565,6 +724,13 @@ function renderAccountDetailPage(accountId) {
 }
 
 function renderChannelPage() {
+  const assetsByIndustry = state.contentAssets.reduce((groups, asset) => {
+    const key = asset.industry || "Other";
+    groups[key] = groups[key] || [];
+    groups[key].push(asset);
+    return groups;
+  }, {});
+
   pageContent.innerHTML = `
     <div class="section-header">
       <h2>Channel Command</h2>
@@ -595,32 +761,47 @@ function renderChannelPage() {
 
     <div class="section-header">
       <h2>Content & Activation</h2>
-      <span class="tag">Live Tracking</span>
+      <span class="tag">Industry View</span>
     </div>
-    <div class="account-grid">
-      ${state.contentAssets
-        .map(
-          (asset) => `
-            <article class="account-card">
-              <div class="account-card-header">
-                <div>
-                  <p class="eyebrow">${asset.industry}</p>
-                  <h3>${asset.title}</h3>
-                </div>
-                <span class="tag">${asset.status}</span>
-              </div>
-              <p><strong>Activation Score:</strong> ${asset.score}</p>
-              <p><strong>Channels:</strong> ${asset.channels.join(", ")}</p>
-              <p>${asset.gap}</p>
-              <div class="actions-row">
-                <a class="secondary-button" href="${asset.link}">Open Link</a>
-                <button class="ghost-button" data-edit-content="${asset.id}" type="button">Edit</button>
-              </div>
-            </article>
-          `
-        )
-        .join("")}
-    </div>
+    <article class="feature-card detail-section">
+      <p class="eyebrow">Content Sync Status</p>
+      <h3>What is live vs what still needs source automation</h3>
+      <p>The workspace can track live pieces by industry and activation status, but true auto-updating from the Insight Global website still needs the site-source sync finished. Until that is connected, this section is the cleanest place to keep a strategic view of what is live and what still needs activation.</p>
+    </article>
+    ${Object.entries(assetsByIndustry)
+      .map(
+        ([industry, assets]) => `
+          <div class="section-header">
+            <h2>${industry}</h2>
+            <span class="tag">${assets.length} pieces</span>
+          </div>
+          <div class="account-grid">
+            ${assets
+              .map(
+                (asset) => `
+                  <article class="account-card">
+                    <div class="account-card-header">
+                      <div>
+                        <p class="eyebrow">${asset.industry}</p>
+                        <h3>${asset.title}</h3>
+                      </div>
+                      <span class="tag">${asset.status}</span>
+                    </div>
+                    <p><strong>Activation Score:</strong> ${asset.score}</p>
+                    <p><strong>Channels:</strong> ${asset.channels.join(", ")}</p>
+                    <p>${asset.gap}</p>
+                    <div class="actions-row">
+                      <a class="secondary-button" href="${asset.link}" target="_blank" rel="noreferrer">Open Link</a>
+                      <button class="ghost-button" data-edit-content="${asset.id}" type="button">Edit</button>
+                    </div>
+                  </article>
+                `
+              )
+              .join("")}
+          </div>
+        `
+      )
+      .join("")}
   `;
 }
 
@@ -839,6 +1020,125 @@ function renderStrategyLabPage() {
   `;
 }
 
+function renderIndustryWarRoomsPage() {
+  pageContent.innerHTML = `
+    <div class="section-header">
+      <h2>Industry War Rooms</h2>
+      <span class="tag">Financial Services, Life Sciences, Tech, Telecom</span>
+    </div>
+    <div class="industry-grid">
+      ${state.industryWarRooms
+        .map(
+          (room) => `
+            <article class="feature-card detail-section">
+              <div class="card-title-row">
+                <div>
+                  <p class="eyebrow">${room.subline}</p>
+                  <h3>${room.name}</h3>
+                </div>
+              </div>
+              <p><strong>North star:</strong> ${room.northStar}</p>
+              <p class="eyebrow">What changed</p>
+              <ul>
+                ${room.whatChanged.map((item) => `<li>${item}</li>`).join("")}
+              </ul>
+              <p class="eyebrow">Market pressures</p>
+              <ul>
+                ${room.marketPressures.map((item) => `<li>${item}</li>`).join("")}
+              </ul>
+              <p class="eyebrow">Next bets</p>
+              <ul>
+                ${room.nextBets.map((item) => `<li>${item}</li>`).join("")}
+              </ul>
+            </article>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderGrowthLabPage() {
+  pageContent.innerHTML = `
+    <div class="section-header">
+      <h2>Growth Lab</h2>
+      <span class="tag">Senior Brand Manager Track</span>
+    </div>
+    <article class="feature-card detail-section">
+      <p class="eyebrow">Core Purpose</p>
+      <h3>${state.growthTrack.title}</h3>
+      <p>${state.growthTrack.corePurpose}</p>
+    </article>
+    <div class="detail-layout">
+      <div class="detail-main">
+        <article class="feature-card detail-section">
+          <p class="eyebrow">Operate In Your Current Role</p>
+          <h3>What To Keep Doing Better</h3>
+          <ul>
+            ${state.growthTrack.currentRoleMoves.map((item) => `<li>${item}</li>`).join("")}
+          </ul>
+        </article>
+        <article class="feature-card detail-section">
+          <p class="eyebrow">Operate At The Next Level</p>
+          <h3>Behaviors To Practice Now</h3>
+          <ul>
+            ${state.growthTrack.nextRoleBehaviors.map((item) => `<li>${item}</li>`).join("")}
+          </ul>
+        </article>
+      </div>
+      <div class="detail-side">
+        <article class="feature-card detail-section">
+          <p class="eyebrow">Proof Areas</p>
+          <h3>What You Need Receipts For</h3>
+          <ul>
+            ${state.growthTrack.proofAreas.map((item) => `<li>${item}</li>`).join("")}
+          </ul>
+        </article>
+        <article class="feature-card detail-section">
+          <p class="eyebrow">Weekly Actions</p>
+          <h3>How To Build The Case</h3>
+          <ul>
+            ${state.growthTrack.weeklyActions.map((item) => `<li>${item}</li>`).join("")}
+          </ul>
+        </article>
+      </div>
+    </div>
+    <article class="feature-card detail-section">
+      <p class="eyebrow">Conversation Framework</p>
+      <h3>How To Sound Like The Role Now</h3>
+      <ul>
+        ${state.growthTrack.conversationPrompts.map((item) => `<li>${item}</li>`).join("")}
+      </ul>
+    </article>
+  `;
+}
+
+function renderNotesPage() {
+  pageContent.innerHTML = `
+    <div class="section-header">
+      <h2>Amenitra's Notes</h2>
+      <div class="actions-row">
+        <span class="tag">Private Thinking Space</span>
+        <button class="secondary-button" data-edit-thoughts="open" type="button">Edit Notes</button>
+      </div>
+    </div>
+    <div class="goal-grid">
+      <article class="goal-box">
+        <span class="label">Current Thinking</span>
+        <p>${state.thoughtsHub.currentThinking}</p>
+      </article>
+      <article class="goal-box">
+        <span class="label">Next Steps</span>
+        <p>${state.thoughtsHub.nextSteps}</p>
+      </article>
+      <article class="goal-box">
+        <span class="label">Experiments</span>
+        <p>${state.thoughtsHub.experiments}</p>
+      </article>
+    </div>
+  `;
+}
+
 function renderTasksPage() {
   pageContent.innerHTML = `
     <div class="section-header">
@@ -861,6 +1161,7 @@ function renderTasksPage() {
                   <div class="list-item">
                     <strong>${task.title}</strong>
                     <p>${task.priority} priority • ${task.due} • Source: ${task.source}</p>
+                    ${task.owner || task.workstream || task.link ? `<p>${[task.owner, task.workstream].filter(Boolean).join(" • ")}${task.link ? ` • <a href="${task.link}" target="_blank" rel="noreferrer">Open link</a>` : ""}</p>` : ""}
                   </div>
                 `
               )
@@ -883,6 +1184,7 @@ function renderTasksPage() {
                   <div class="list-item">
                     <strong>${launch.title}</strong>
                     <p>${launch.phase} • ${launch.owner}</p>
+                    ${launch.due || launch.progress !== "" ? `<p>${[launch.due ? `Due: ${launch.due}` : "", launch.progress !== "" ? `Progress: ${launch.progress}%` : ""].filter(Boolean).join(" • ")}</p>` : ""}
                     <p>${launch.note}</p>
                   </div>
                 `
@@ -998,11 +1300,20 @@ function renderPage() {
     case "Channel Command":
       renderChannelPage();
       break;
+    case "Industry War Rooms":
+      renderIndustryWarRoomsPage();
+      break;
     case "Meetings":
       renderMeetingPage(activeView.accountId);
       break;
     case "Goals & Wins":
       renderGoalsPage();
+      break;
+    case "Growth Lab":
+      renderGrowthLabPage();
+      break;
+    case "Amenitra's Notes":
+      renderNotesPage();
       break;
     case "Strategy Lab":
       renderStrategyLabPage();
@@ -1040,13 +1351,13 @@ function openAutomationHelp(mode) {
       <label>What has to be connected first</label>
       <textarea readonly>${
         mode === "refresh"
-          ? "To make Monday 7:00am refresh truly work, the app needs Supabase connected for storage plus Airtable, Outlook, Teams, HubSpot, and a news/data source connected through APIs or serverless functions."
-          : "To make source scans work, we need Airtable API access, Microsoft Graph access for Outlook and Teams, and HubSpot access. Right now the prototype is ready for the workflow, but it is not yet authenticated to those services."
+          ? "To make Monday 7:00am refresh truly work, the app needs Supabase connected for storage plus Airtable, Outlook, Teams, HubSpot, and a news/data source connected through APIs or serverless functions. Airtable is now scaffolded to run safely through a Netlify function with environment variables."
+          : "To make source scans work, we need Airtable API access, Microsoft Graph access for Outlook and Teams, and HubSpot access. Airtable should be connected through Netlify environment variables and a server-side sync function so the token never lives in the frontend."
       }</textarea>
     </div>
     <div class="form-field">
       <label>Next setup step</label>
-      <textarea readonly>Connect Supabase first, then add source credentials, then build the server-side sync functions that write fresh source data into the database.</textarea>
+      <textarea readonly>Connect Supabase first, then add source credentials as Netlify environment variables, then run the server-side sync functions that write fresh source data into the database.</textarea>
     </div>
     <div class="form-actions">
       <button class="ghost-button" data-close-form type="button">Close</button>
@@ -1100,10 +1411,10 @@ function openAccountEditor(accountId) {
     <div class="form-field">
       <label for="account-signals-help">Current Signals Format</label>
       <textarea id="account-signals-help" readonly>Use one line per signal in this format:
-Title | Detail | Source Label | Source URL | Next Step
+Title | Summary | Why It Matters | Source Label | Source URL | Next Step
 
 Example:
-State Farm promoted a new CDAO | Leadership change is making data and AI more central to digital strategy. | Company signal | https://example.com | Bring a consultant POV on data and AI execution support for the next meeting.</textarea>
+State Farm promoted a new CDAO | Leadership change is making data and AI more central to digital strategy. | This changes who owns the digital and analytics agenda and makes data execution more relevant in the next meeting. | Company signal | https://example.com | Bring a consultant POV on data and AI execution support for the next meeting.</textarea>
     </div>
     <div class="form-field">
       <label for="account-reminders">Reminders For Next Meeting</label>
@@ -1236,6 +1547,40 @@ function openContentEditor(contentId) {
   openModal();
 }
 
+function openThoughtsEditor() {
+  modalTitle.textContent = "Edit Amenitra's Notes";
+  editForm.innerHTML = `
+    <div class="form-field">
+      <label for="thoughts-current">Current Thinking</label>
+      <textarea id="thoughts-current" name="currentThinking">${state.thoughtsHub.currentThinking}</textarea>
+    </div>
+    <div class="form-field">
+      <label for="thoughts-next">Next Steps</label>
+      <textarea id="thoughts-next" name="nextSteps">${state.thoughtsHub.nextSteps}</textarea>
+    </div>
+    <div class="form-field">
+      <label for="thoughts-experiments">Experiments</label>
+      <textarea id="thoughts-experiments" name="experiments">${state.thoughtsHub.experiments}</textarea>
+    </div>
+    <div class="form-actions">
+      <button class="primary-button" type="submit">Save Changes</button>
+      <button class="ghost-button" data-close-form type="button">Cancel</button>
+    </div>
+  `;
+
+  editForm.onsubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(editForm);
+    state.thoughtsHub.currentThinking = String(formData.get("currentThinking") || "").trim();
+    state.thoughtsHub.nextSteps = String(formData.get("nextSteps") || "").trim();
+    state.thoughtsHub.experiments = String(formData.get("experiments") || "").trim();
+    await saveAndRender("thoughts");
+    closeModal();
+  };
+
+  openModal();
+}
+
 function refreshAccount(accountId) {
   const account = state.accounts.find((item) => item.id === accountId);
   if (!account) {
@@ -1297,6 +1642,7 @@ function handlePageClick(event) {
   const generateDeckButton = event.target.closest("[data-generate-deck]");
   const automationHelpButton = event.target.closest("[data-open-automation-help]");
   const refreshButton = event.target.closest("[data-refresh-account]");
+  const editThoughtsButton = event.target.closest("[data-edit-thoughts]");
   const cancelButton = event.target.closest("[data-close-form]");
 
   if (navButton) {
@@ -1355,6 +1701,11 @@ function handlePageClick(event) {
 
   if (refreshButton) {
     refreshAccount(refreshButton.dataset.refreshAccount);
+    return;
+  }
+
+  if (editThoughtsButton) {
+    openThoughtsEditor();
     return;
   }
 

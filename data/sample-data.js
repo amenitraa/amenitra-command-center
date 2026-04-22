@@ -28,11 +28,14 @@ export const sampleData = {
   navItems: [
     "Home",
     "Accounts",
+    "Industry War Rooms",
     "Channel Command",
     "Strategy Lab",
     "Tasks & Launches",
     "Meetings",
     "Goals & Wins",
+    "Growth Lab",
+    "Amenitra's Notes",
     "Leadership",
     "Automation Hub"
   ],
@@ -790,6 +793,137 @@ export const sampleData = {
       lastSyncedAt: ""
     }
   ],
+  industryWarRooms: [
+    {
+      id: "financial-services",
+      name: "Financial Services",
+      subline: "Banking, insurance, fraud, trust, modernization",
+      northStar: "Win by translating regulation, trust, and modernization pressure into clear narratives that help sales sound informed instead of generic.",
+      whatChanged: [
+        "Fraud, AML, identity, and trust architecture continue to shape priority conversations across major FS accounts.",
+        "Financial firms are under pressure to show more leverage from AI, cloud, and data investments they have already made.",
+        "Procurement, governance, and low-risk execution remain just as important as innovation language."
+      ],
+      marketPressures: [
+        "Operational efficiency without control breakdowns",
+        "Governed AI adoption instead of experimentation theater",
+        "Identity, fraud, and trust resilience",
+        "Proof-led modernization and ROI pressure"
+      ],
+      nextBets: [
+        "Package regulated-services proof for sales in tighter story formats",
+        "Use account signals to shape narrow stakeholder hooks before meetings",
+        "Translate content into clearer consultant recommendations by banking vs insurance need"
+      ]
+    },
+    {
+      id: "life-sciences",
+      name: "Life Sciences",
+      subline: "Pharma, manufacturing, R&D, quality, FSP",
+      northStar: "Win by connecting innovation, quality, and scale-up urgency to practical execution support that reduces friction in complex environments.",
+      whatChanged: [
+        "Scale-up, manufacturing readiness, and quality continuity remain central themes for both J&J and Eli Lilly.",
+        "AI and digital remain relevant, but they only matter when tied to throughput, compliance, and readiness.",
+        "Operational leverage and FSP credibility need to feel tangible, not abstract."
+      ],
+      marketPressures: [
+        "Speed without quality tradeoffs",
+        "Manufacturing and facility readiness",
+        "Digital acceleration in regulated environments",
+        "Continuity across M&Q, R&D, and supply chain programs"
+      ],
+      nextBets: [
+        "Sharpen life sciences proof around readiness, scale, and execution continuity",
+        "Use FSP language as operational leverage rather than staffing shorthand",
+        "Bring more consultant-style POVs into J&J and Lilly meetings"
+      ]
+    },
+    {
+      id: "tech",
+      name: "Tech",
+      subline: "Growth watchlist",
+      northStar: "Track where AI, cloud, platform, and product shifts create narrative openings for Insight Global to sound more strategic in tech-led conversations.",
+      whatChanged: [
+        "AI platform competition is changing how companies talk about talent, speed, and differentiation.",
+        "Product, data, and platform teams are expected to ship faster while showing tighter efficiency.",
+        "Trust, adaptability, and specialized execution support remain strategic buying themes."
+      ],
+      marketPressures: [
+        "Efficiency with innovation pressure",
+        "AI-enabled product acceleration",
+        "Platform reliability and security expectations",
+        "Clearer differentiation in crowded markets"
+      ],
+      nextBets: [
+        "Build a monitor for product, platform, and AI hiring/investment signals",
+        "Start shaping a tech-specific proof narrative before the portfolio grows",
+        "Track which content themes could credibly transfer into tech conversations"
+      ]
+    },
+    {
+      id: "telecom",
+      name: "Telecom",
+      subline: "Growth watchlist",
+      northStar: "Track how infrastructure modernization, network experience, and operational efficiency create room for a stronger industry point of view.",
+      whatChanged: [
+        "Network modernization and customer experience still shape strategic priorities.",
+        "Telecom organizations continue balancing infrastructure complexity with pressure to simplify experience and cost.",
+        "Transformation stories need to land as operational improvement, not just future-state vision."
+      ],
+      marketPressures: [
+        "Infrastructure modernization",
+        "Cost discipline and simplification",
+        "Experience quality and retention pressure",
+        "Execution reliability across complex programs"
+      ],
+      nextBets: [
+        "Keep a live watch on telecom modernization narratives",
+        "Create a starter POV for where brand, content, and field motions could support growth",
+        "Track which operational proof points could translate into telecom relevance"
+      ]
+    }
+  ],
+  growthTrack: {
+    title: "Senior Brand Manager North Star",
+    corePurpose:
+      "Own the strategic direction of the brand by translating business priorities, market dynamics, and audience behavior into clear narratives, differentiated positioning, and high-impact brand moments that drive perception, credibility, and growth.",
+    currentRoleMoves: [
+      "Keep running your account and channel work with stronger follow-through, sharper briefs, and consultant-style recommendations.",
+      "Use monthly meetings to simplify complexity into clearer strategic direction instead of only project updates.",
+      "Turn launches and account insight into repeatable systems that show leadership, not just execution support."
+    ],
+    nextRoleBehaviors: [
+      "Lead with a point of view rooted in business, audience, brand, and experience.",
+      "Create alignment before execution starts by reframing fragmented asks into one stronger narrative.",
+      "Move teams from informative marketing to insight-led storytelling and more memorable brand moments."
+    ],
+    proofAreas: [
+      "Narrative leadership and positioning",
+      "Insight-led strategy and opportunity spotting",
+      "Integrated storytelling across channels",
+      "Experience design and brand moments",
+      "Cross-functional alignment and executive presence"
+    ],
+    conversationPrompts: [
+      "Before we get into execution, what are we actually trying to solve or shift?",
+      "If we think about how the audience is approaching this, what will matter most to them right now?",
+      "How do we want the brand to show up here so we reinforce, not dilute, our positioning?",
+      "How do we turn this into something memorable instead of another touchpoint?"
+    ],
+    weeklyActions: [
+      "Document one example each week where you reframed work at the strategy level.",
+      "Capture one proof point that shows alignment, narrative leadership, or business impact.",
+      "Identify one fragmented effort that you can turn into a clearer brand moment or cross-channel story."
+    ]
+  },
+  thoughtsHub: {
+    currentThinking:
+      "I want this space to help me act like the consultant to sales and the future Senior Brand Manager at the same time. I need stronger strategic POVs, better follow-through, and clearer systems that connect insight to execution.",
+    nextSteps:
+      "Refine account war rooms, tighten current signals with better sources, and keep translating launches and industry movement into usable talking points for meetings and leadership conversations.",
+    experiments:
+      "Test what happens when every major meeting opens with business problem + audience truth + brand POV + experience recommendation instead of a status recap."
+  },
   placeholders: {
     strategyLab: {
       title: "Strategy Lab",

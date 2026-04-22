@@ -296,7 +296,9 @@ body.workspace-entered .welcome-screen {
 .overview-grid,
 .feature-grid,
 .account-grid,
-.channel-grid {
+.channel-grid,
+.industry-grid,
+.command-hero {
   display: grid;
   gap: 18px;
 }
@@ -309,9 +311,24 @@ body.workspace-entered .welcome-screen {
   grid-template-columns: 1.15fr 0.85fr;
 }
 
+.command-hero {
+  grid-template-columns: 1.2fr 0.8fr;
+}
+
 .account-grid,
-.channel-grid {
+.channel-grid,
+.industry-grid {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.hero-primary h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  line-height: 1.08;
+}
+
+.hero-secondary .list-item {
+  background: rgba(255, 255, 255, 0.72);
 }
 
 .feature-card,
@@ -507,11 +524,16 @@ body.workspace-entered .welcome-screen {
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.58);
   border: 1px solid var(--border);
+  align-items: start;
 }
 
 .pain-item p {
   margin: 0;
   color: var(--muted);
+}
+
+.pain-item strong {
+  color: var(--text);
 }
 
 .pain-rank {
@@ -559,6 +581,7 @@ body.workspace-entered .welcome-screen {
 
 .signal-item a {
   color: var(--text);
+  text-decoration-thickness: 1px;
 }
 
 .label {
@@ -663,6 +686,7 @@ body.workspace-entered .welcome-screen {
   }
 
   .topbar,
+  .command-hero,
   .feature-grid,
   .detail-layout {
     grid-template-columns: 1fr;

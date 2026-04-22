@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Executive Takeaway</title>
+  <style>
+    @page {
+      size: letter;
+      margin: 0.6in 0.7in;
+    }
+
+    :root {
+      --ink: #172033;
+      --muted: #5d6a7e;
+      --accent: #0d5c63;
+      --panel: #eef4f8;
+      --line: #d6e0e8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", Avenir, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: white;
+    }
+
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 16px;
+    }
+
+    .hero {
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, #f8fbfd 0%, #edf5f8 100%);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 26px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .card {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      background: white;
+    }
+
+    .card.tinted {
+      background: var(--panel);
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .lead {
+      margin: 0 0 8px;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .body {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .pill {
+      display: inline-block;
+      margin: 0 0 10px;
+      padding: 5px 9px;
+      border: 1px solid #bfd0db;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .full {
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      background: white;
+    }
+
+    ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+
+    li {
+      margin: 0 0 8px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <p class="eyebrow">Executive Takeaway</p>
+      <h1>Momentum is building in AML, cloud, AI, fraud, but we still need stronger proof and stakeholder confidence to turn traction into expansion.</h1>
+    </section>
+
+    <section class="grid">
+      <article class="card tinted">
+        <h2>What's Working</h2>
+        <p class="pill">AML, cloud, AI, fraud</p>
+        <p class="body">Bank of America remains a large-scale modernization and control environment where execution credibility matters as much as innovation language. The account is under constant pressure to improve resilience, fraud controls, AML throughput, data access, and cloud maturity without increasing operational risk. That creates room for a partner who can show disciplined delivery, not just ideas.</p>
+      </article>
+
+      <article class="card">
+        <h2>Where We Are Losing</h2>
+        <p class="lead">Signals are strong, but credibility still needs clearer proof packaging.</p>
+        <p class="body">Stakeholder momentum can drop when next steps are not tightly tied to account pain.</p>
+      </article>
+    </section>
+
+    <section class="full">
+      <h2>Core Insight</h2>
+      <p class="lead">Lead with controlled execution, procurement-defensible proof, and a point of view on AML, fraud, cloud, and AI adoption with governance.</p>
+
+      <h2 style="margin-top: 18px;">Immediate Actions</h2>
+      <ul>
+        <li>Launch one focused proof-led follow-up tied to current stakeholder priorities.</li>
+        <li>Activate sales with one clear message, one proof point, and one next-step ask.</li>
+        <li>Use current signals to shift from broad visibility to account-specific credibility.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
