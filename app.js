@@ -332,38 +332,6 @@ function renderQuote() {
 
 function renderHomePage() {
   pageContent.innerHTML = `
-    <section class="command-hero">
-      <article class="feature-card hero-primary">
-        <p class="eyebrow">Command Briefing</p>
-        <h2>Operate like the consultant today and the Senior Brand Manager before the title arrives.</h2>
-        <p>${state.growthTrack.corePurpose}</p>
-        <div class="actions-row">
-          <button class="secondary-button" data-open-page="Growth Lab" type="button">Open Growth Lab</button>
-          <button class="ghost-button" data-open-page="Amenitra's Notes" type="button">Open Your Notes</button>
-        </div>
-      </article>
-      <article class="feature-card hero-secondary">
-        <div class="section-header">
-          <h2>North Star This Week</h2>
-          <span class="tag">Dual Track</span>
-        </div>
-        <div class="list-stack">
-          <div class="list-item">
-            <strong>Current role</strong>
-            <p>${state.growthTrack.currentRoleMoves[0]}</p>
-          </div>
-          <div class="list-item">
-            <strong>Next role</strong>
-            <p>${state.growthTrack.nextRoleBehaviors[0]}</p>
-          </div>
-          <div class="list-item">
-            <strong>Build proof</strong>
-            <p>${state.growthTrack.weeklyActions[0]}</p>
-          </div>
-        </div>
-      </article>
-    </section>
-
     <div class="overview-grid">
       ${state.overviewCards
         .map(
@@ -570,25 +538,19 @@ function renderAccountsPage() {
   `;
 }
 
-function renderAccountDetailPage(accountId) {
-  const account = state.accounts.find((item) => item.id === accountId);
-  if (!account) {
-    renderAccountsPage();
-    return;
-  }
-
-  pageContent.innerHTML = `
+function renderWarRoomDetail(entity, options = {}) {
+  return `
     <div class="section-header">
       <div class="account-hero">
-        <div class="account-mark">${escapeHtml(account.name.slice(0, 2).toUpperCase())}</div>
+        <div class="account-mark">${escapeHtml(entity.name.slice(0, 2).toUpperCase())}</div>
         <div>
-          <h2>${account.name}</h2>
-          <p class="meta">${account.industry}${account.subIndustry ? ` • ${account.subIndustry}` : ""}</p>
+          <h2>${entity.name}</h2>
+          <p class="meta">${options.subline || `${entity.industry}${entity.subIndustry ? ` • ${entity.subIndustry}` : ""}`}</p>
         </div>
       </div>
       <div class="actions-row">
-        <button class="secondary-button" data-refresh-account="${account.id}" type="button">Refresh Account</button>
-        <button class="ghost-button" data-edit-account="${account.id}" type="button">Edit Account</button>
+        ${options.showRefresh ? `<button class="secondary-button" data-refresh-account="${entity.id}" type="button">Refresh ${options.label || "War Room"}</button>` : ""}
+        ${options.editAction || ""}
       </div>
     </div>
 
@@ -596,14 +558,14 @@ function renderAccountDetailPage(accountId) {
       <div class="card-title-row">
         <div>
           <p class="eyebrow">Market Position</p>
-          <h3>Account Reality Check</h3>
+          <h3>${options.realityTitle || "Reality Check"}</h3>
         </div>
-        <span class="tag">${account.status}</span>
+        <span class="tag">${entity.status}</span>
       </div>
-      <p>${account.marketPosition}</p>
+      <p>${entity.marketPosition}</p>
       <div class="meta-row">
-        <span class="tag">Target ${account.target}</span>
-        <span class="tag">${account.focus}</span>
+        <span class="tag">Target ${entity.target}</span>
+        <span class="tag">${entity.focus}</span>
       </div>
     </article>
 
@@ -613,13 +575,13 @@ function renderAccountDetailPage(accountId) {
           <div class="card-title-row">
             <div>
               <p class="eyebrow">Current Signals</p>
-              <h3>What Is Happening In The Company And Industry</h3>
+              <h3>What Is Happening In The ${options.signalScope || "Company And Industry"}</h3>
             </div>
             <span class="tag">Intelligence View</span>
           </div>
           <div class="signal-list">
-            ${account.signals
-              .map((signal) => normalizeSignal(signal, account))
+            ${entity.signals
+              .map((signal) => normalizeSignal(signal, entity))
               .map(
                 (signal) => `
                   <div class="signal-item signal-item-accent">
@@ -629,7 +591,7 @@ function renderAccountDetailPage(accountId) {
                     <p class="meta"><strong>Why it matters:</strong> ${escapeHtml(signal.whyItMatters)}</p>
                     <div class="signal-next-step">
                       <span class="label">How We Stay Relevant</span>
-                      <p>${escapeHtml(deriveSignalNextStep(signal, account))}</p>
+                      <p>${escapeHtml(deriveSignalNextStep(signal, entity))}</p>
                     </div>
                   </div>
                 `
@@ -648,15 +610,17 @@ function renderAccountDetailPage(accountId) {
             </div>
           </div>
           <div class="pain-stack">
-            ${account.painHierarchy
-              .map((pain) => normalizePain(pain, account))
+            ${entity.painHierarchy
+              .map((pain) => normalizePain(pain, entity))
               .map(
                 (pain, index) => `
                   <div class="pain-item">
                     <span class="pain-rank">#${index + 1}</span>
-                    <p><strong>${pain.issue}</strong></p>
-                    <p class="meta"><strong>Why it matters:</strong> ${pain.whyItMatters}</p>
-                    <p class="meta"><strong>How to respond:</strong> ${pain.response}</p>
+                    <div class="pain-body">
+                      <p><strong>${pain.issue}</strong></p>
+                      <p class="meta"><strong>Why it matters:</strong> ${pain.whyItMatters}</p>
+                      <p class="meta"><strong>How to respond:</strong> ${pain.response}</p>
+                    </div>
                   </div>
                 `
               )
@@ -675,9 +639,9 @@ function renderAccountDetailPage(accountId) {
               <h3>How You Show Up</h3>
             </div>
           </div>
-          <p>${account.consultantPositioning}</p>
+          <p>${entity.consultantPositioning}</p>
           <ul>
-            ${account.notes.map((note) => `<li>${note}</li>`).join("")}
+            ${entity.notes.map((note) => `<li>${note}</li>`).join("")}
           </ul>
         </article>
       </div>
@@ -686,41 +650,38 @@ function renderAccountDetailPage(accountId) {
         <article class="feature-card detail-section">
           <div class="card-title-row">
             <div>
-              <p class="eyebrow">Stakeholders</p>
-              <h3>People To Keep Close</h3>
-            </div>
-          </div>
-          <div class="stakeholder-list">
-            ${account.stakeholders
-              .map(
-                (stakeholder) => `
-                  <div class="signal-item">
-                    <span class="label">Stakeholder</span>
-                    <span class="value">${stakeholder}</span>
-                  </div>
-                `
-              )
-              .join("")}
-          </div>
-        </article>
-
-        <article class="feature-card detail-section">
-          <div class="card-title-row">
-            <div>
-              <p class="eyebrow">Next Meeting</p>
-              <h3>Bring This Up</h3>
+              <p class="eyebrow">${options.sideLabel || "Next Focus"}</p>
+              <h3>${options.sideTitle || "Bring This Up"}</h3>
             </div>
           </div>
           <ul>
-            ${account.reminders.map((item) => `<li>${item}</li>`).join("")}
+            ${entity.reminders.map((item) => `<li>${item}</li>`).join("")}
           </ul>
-          <div class="actions-row">
-            <button class="primary-button" data-open-meeting="${account.id}" type="button">Prep Meeting</button>
-          </div>
+          ${options.sideButton || ""}
         </article>
       </div>
     </div>
   `;
+}
+
+function renderAccountDetailPage(accountId) {
+  const account = state.accounts.find((item) => item.id === accountId);
+  if (!account) {
+    renderAccountsPage();
+    return;
+  }
+
+  pageContent.innerHTML = renderWarRoomDetail(account, {
+    label: "Account",
+    showRefresh: true,
+    subline: `${account.industry}${account.subIndustry ? ` • ${account.subIndustry}` : ""}`,
+    realityTitle: "Account Reality Check",
+    signalScope: "Company And Industry",
+    editAction: `<button class="ghost-button" data-edit-account="${account.id}" type="button">Edit Account</button>`,
+    sideLabel: "Next Meeting",
+    sideTitle: "Bring This Up",
+    sideButton: `<div class="actions-row"><button class="primary-button" data-open-meeting="${account.id}" type="button">Prep Meeting</button></div>`
+  });
 }
 
 function renderChannelPage() {
@@ -1026,36 +987,49 @@ function renderIndustryWarRoomsPage() {
       <h2>Industry War Rooms</h2>
       <span class="tag">Financial Services, Life Sciences, Tech, Telecom</span>
     </div>
-    <div class="industry-grid">
+    <div class="account-grid">
       ${state.industryWarRooms
         .map(
           (room) => `
-            <article class="feature-card detail-section">
-              <div class="card-title-row">
+            <article class="account-card">
+              <div class="account-card-header">
                 <div>
                   <p class="eyebrow">${room.subline}</p>
                   <h3>${room.name}</h3>
                 </div>
+                <span class="tag">${room.status}</span>
               </div>
-              <p><strong>North star:</strong> ${room.northStar}</p>
-              <p class="eyebrow">What changed</p>
-              <ul>
-                ${room.whatChanged.map((item) => `<li>${item}</li>`).join("")}
-              </ul>
-              <p class="eyebrow">Market pressures</p>
-              <ul>
-                ${room.marketPressures.map((item) => `<li>${item}</li>`).join("")}
-              </ul>
-              <p class="eyebrow">Next bets</p>
-              <ul>
-                ${room.nextBets.map((item) => `<li>${item}</li>`).join("")}
-              </ul>
+              <p>${room.marketPosition}</p>
+              <div class="meta-row">
+                <span class="tag">${room.target}</span>
+                <span class="tag">${room.focus}</span>
+              </div>
+              <div class="actions-row">
+                <button class="secondary-button" data-open-industry="${room.id}" type="button">Open War Room</button>
+              </div>
             </article>
           `
         )
         .join("")}
     </div>
   `;
+}
+
+function renderIndustryDetailPage(industryId) {
+  const room = state.industryWarRooms.find((item) => item.id === industryId);
+  if (!room) {
+    renderIndustryWarRoomsPage();
+    return;
+  }
+
+  pageContent.innerHTML = renderWarRoomDetail(room, {
+    label: "Industry",
+    subline: room.subline,
+    realityTitle: "Industry Reality Check",
+    signalScope: "Industry",
+    sideLabel: "Next Focus",
+    sideTitle: "What To Drive Next"
+  });
 }
 
 function renderGrowthLabPage() {
@@ -1281,6 +1255,8 @@ function renderPage() {
   pageTitle.textContent =
     activeView.page === "Account Detail"
       ? state.accounts.find((account) => account.id === activeView.accountId)?.name || "Accounts"
+      : activeView.page === "Industry Detail"
+        ? state.industryWarRooms.find((room) => room.id === activeView.industryId)?.name || "Industry War Rooms"
       : activeView.page === "Meetings" && activeView.accountId
         ? "Meeting Prep"
         : activeView.page;
@@ -1302,6 +1278,9 @@ function renderPage() {
       break;
     case "Industry War Rooms":
       renderIndustryWarRoomsPage();
+      break;
+    case "Industry Detail":
+      renderIndustryDetailPage(activeView.industryId);
       break;
     case "Meetings":
       renderMeetingPage(activeView.accountId);
@@ -1634,6 +1613,7 @@ function handlePageClick(event) {
   const navButton = event.target.closest("[data-page]");
   const pageButton = event.target.closest("[data-open-page]");
   const accountButton = event.target.closest("[data-open-account]");
+  const industryButton = event.target.closest("[data-open-industry]");
   const meetingButton = event.target.closest("[data-open-meeting]");
   const editButton = event.target.closest("[data-edit-account]");
   const editChannelButton = event.target.closest("[data-edit-channel]");
@@ -1659,6 +1639,12 @@ function handlePageClick(event) {
 
   if (accountButton) {
     activeView = { page: "Account Detail", accountId: accountButton.dataset.openAccount };
+    renderPage();
+    return;
+  }
+
+  if (industryButton) {
+    activeView = { page: "Industry Detail", industryId: industryButton.dataset.openIndustry };
     renderPage();
     return;
   }

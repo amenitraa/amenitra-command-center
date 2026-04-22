@@ -286,6 +286,9 @@ body.workspace-entered .welcome-screen {
   border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.74);
   border: 1px solid var(--border);
+  display: grid;
+  gap: 6px;
+  align-content: start;
 }
 
 .page-section {
@@ -297,8 +300,7 @@ body.workspace-entered .welcome-screen {
 .feature-grid,
 .account-grid,
 .channel-grid,
-.industry-grid,
-.command-hero {
+.industry-grid {
   display: grid;
   gap: 18px;
 }
@@ -311,24 +313,10 @@ body.workspace-entered .welcome-screen {
   grid-template-columns: 1.15fr 0.85fr;
 }
 
-.command-hero {
-  grid-template-columns: 1.2fr 0.8fr;
-}
-
 .account-grid,
 .channel-grid,
 .industry-grid {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-
-.hero-primary h2 {
-  margin: 0 0 12px;
-  font-size: clamp(1.8rem, 3vw, 2.7rem);
-  line-height: 1.08;
-}
-
-.hero-secondary .list-item {
-  background: rgba(255, 255, 255, 0.72);
 }
 
 .feature-card,
@@ -536,6 +524,12 @@ body.workspace-entered .welcome-screen {
   color: var(--text);
 }
 
+.pain-body {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
 .pain-rank {
   display: inline-flex;
   align-items: center;
@@ -686,7 +680,6 @@ body.workspace-entered .welcome-screen {
   }
 
   .topbar,
-  .command-hero,
   .feature-grid,
   .detail-layout {
     grid-template-columns: 1fr;

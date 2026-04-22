@@ -798,7 +798,91 @@ export const sampleData = {
       id: "financial-services",
       name: "Financial Services",
       subline: "Banking, insurance, fraud, trust, modernization",
-      northStar: "Win by translating regulation, trust, and modernization pressure into clear narratives that help sales sound informed instead of generic.",
+      status: "Industry war room",
+      focus: "Fraud, AML, insurance pressure, modernization, trust",
+      target: "Portfolio view",
+      marketPosition:
+        "Financial Services is a pressure-heavy environment where modernization, fraud, trust, compliance, and cost control all collide. The opportunity is not to market broadly, but to interpret those pressures into tighter narratives that help sales sound informed, relevant, and low-risk in the room.",
+      consultantPositioning:
+        "Show up with a point of view on trust, regulation, and practical modernization so the industry conversation feels sharper than generic BFSI messaging.",
+      signals: [
+        {
+          title: "Fraud, AML, and trust continue to anchor strategic buying conversations",
+          summary:
+            "Major financial institutions are still prioritizing fraud resilience, AML throughput, identity controls, and defensible vendor trust.",
+          whyItMatters:
+            "This means broad transformation language is less persuasive than a narrative grounded in trust, control, and measurable operational lift.",
+          sourceLabel: "Financial services operating pattern",
+          sourceUrl: "#",
+          nextStep:
+            "Turn this into narrower talk tracks by account so Bank of America and Capital One conversations feel more controlled and proof-led."
+        },
+        {
+          title: "AI remains relevant, but governed enablement matters more than experimentation",
+          summary:
+            "Financial firms are expected to show value from AI, cloud, and data investments while staying inside governance and risk guardrails.",
+          whyItMatters:
+            "You should position AI as disciplined execution support, not future-state disruption language.",
+          sourceLabel: "2026 planning pattern",
+          sourceUrl: "#",
+          nextStep:
+            "Use this to sharpen the channel story around compliant AI, analytics support, and practical transformation."
+        },
+        {
+          title: "Insurance pressure keeps claims, underwriting, and operational stability highly relevant",
+          summary:
+            "Insurance organizations are still balancing catastrophe volatility, cost pressure, and the need for stronger service and data operations.",
+          whyItMatters:
+            "This creates a stronger wedge for practical support narratives than broad innovation messaging alone.",
+          sourceLabel: "Insurance market signal",
+          sourceUrl: "#",
+          nextStep:
+            "Use this to keep State Farm messaging focused on claims support, operational stability, and disciplined AI/data execution."
+        },
+        {
+          title: "Procurement and vendor defensibility still shape whether momentum turns into meetings",
+          summary:
+            "A strong idea is not enough in regulated financial environments if the next step feels hard to defend internally.",
+          whyItMatters:
+            "You need more proof packaging, cleaner talk tracks, and lower-risk next asks across the FS portfolio.",
+          sourceLabel: "Procurement trust pattern",
+          sourceUrl: "#",
+          nextStep:
+            "Build a more reusable proof system for sales so account momentum does not stall at the trust stage."
+        }
+      ],
+      painHierarchy: [
+        {
+          issue: "Modernization has to happen without making risk, control, or procurement concerns worse.",
+          whyItMatters:
+            "This is why a lot of financial-services messaging falls flat: it sounds ambitious but not defensible.",
+          response:
+            "Lead with low-risk execution, proof, and practical operating lift instead of broad future-state transformation language."
+        },
+        {
+          issue: "Fraud, AML, and trust pressures keep operational credibility at the center of the buying conversation.",
+          whyItMatters:
+            "This keeps the market anchored in execution quality, resilience, and measured outcomes.",
+          response:
+            "Keep your stories grounded in control, throughput, and clean delivery rather than capability sprawl."
+        },
+        {
+          issue: "Insurance and banking require different hooks even when the industry story sounds similar on the surface.",
+          whyItMatters:
+            "If you do not split the narrative by sub-industry, the message will feel too generic to open real opportunity.",
+          response:
+            "Package one tighter FS banking POV and one tighter FS insurance POV so the portfolio story feels more strategic."
+        }
+      ],
+      reminders: [
+        "Keep separating banking and insurance narratives so the industry story does not get too generic.",
+        "Translate every industry signal into a sales-facing hook and one immediate next-step recommendation."
+      ],
+      notes: [
+        "Fraud, AML, insurance pressure, and trust should shape the portfolio story.",
+        "Proof packaging needs to be tighter across the FS industry motion.",
+        "Use the industry room to make account-level conversations smarter, not more abstract."
+      ],
       whatChanged: [
         "Fraud, AML, identity, and trust architecture continue to shape priority conversations across major FS accounts.",
         "Financial firms are under pressure to show more leverage from AI, cloud, and data investments they have already made.",
@@ -820,6 +904,80 @@ export const sampleData = {
       id: "life-sciences",
       name: "Life Sciences",
       subline: "Pharma, manufacturing, R&D, quality, FSP",
+      status: "Industry war room",
+      focus: "Manufacturing readiness, R&D, quality, M&Q, FSP",
+      target: "Portfolio view",
+      marketPosition:
+        "Life Sciences is an execution-heavy environment where innovation only matters if it leads to readiness, scale, quality, and throughput. The strongest story is not abstract innovation. It is operational leverage in regulated, high-stakes environments.",
+      consultantPositioning:
+        "Show up with a sharper point of view on readiness, quality, M&Q, and execution continuity so the industry motion feels like practical business support.",
+      signals: [
+        {
+          title: "Scale-up and readiness remain central to life sciences planning",
+          summary:
+            "Manufacturing, M&Q, facility readiness, and program continuity still shape where urgency lives across life sciences accounts.",
+          whyItMatters:
+            "This means the best positioning is around throughput, continuity, and execution support, not generic innovation language.",
+          sourceLabel: "Life sciences operating pattern",
+          sourceUrl: "#",
+          nextStep:
+            "Use this to keep J&J and Lilly narratives tied to readiness, speed, and operational confidence."
+        },
+        {
+          title: "Digital and AI conversations only land when connected to practical operating outcomes",
+          summary:
+            "AI, data, and digital remain strategic themes, but they need to tie directly to regulated adoption, throughput, and quality.",
+          whyItMatters:
+            "You can widen the conversation with digital, but only if it still sounds credible inside regulated environments.",
+          sourceLabel: "Planning pattern",
+          sourceUrl: "#",
+          nextStep:
+            "Keep digital and AI recommendations tightly connected to quality, speed, and compliance."
+        },
+        {
+          title: "FSP and execution continuity remain strong credibility anchors",
+          summary:
+            "When positioned well, FSP can differentiate Insight Global as a partner that helps complex programs move with less friction.",
+          whyItMatters:
+            "This gives you a more operational, less abstract wedge against larger consulting competitors.",
+          sourceLabel: "Delivery model signal",
+          sourceUrl: "#",
+          nextStep:
+            "Build more seller-friendly language that explains FSP as continuity and leverage, not just staffing terminology."
+        }
+      ],
+      painHierarchy: [
+        {
+          issue: "Innovation stories are not enough unless they tie back to readiness, quality, and execution lift.",
+          whyItMatters:
+            "Life sciences audiences still need confidence that movement can happen without quality slippage.",
+          response:
+            "Keep the story grounded in operational outcomes, throughput, and regulated execution support."
+        },
+        {
+          issue: "Manufacturing, M&Q, and R&D pressures create urgency, but the messaging often gets too broad.",
+          whyItMatters:
+            "If the story stays too high-level, it will not feel specific enough to the people actually carrying the pressure.",
+          response:
+            "Translate the industry view into clearer stakeholder-level hooks for quality, readiness, and continuity."
+        },
+        {
+          issue: "FSP can be a differentiator, but only if it feels strategic and operationally useful.",
+          whyItMatters:
+            "Otherwise it risks sounding like generic delivery packaging instead of a business lever.",
+          response:
+            "Use FSP language to explain speed, continuity, and execution confidence in a more modern way."
+        }
+      ],
+      reminders: [
+        "Use this room to keep J&J and Lilly stories grounded in readiness and quality, not just innovation.",
+        "Sharpen how FSP is explained across the life sciences portfolio."
+      ],
+      notes: [
+        "Readiness, speed, and continuity should define the industry story.",
+        "Digital only helps if it reinforces operating lift in regulated environments.",
+        "Keep the life sciences motion more operational than abstract."
+      ],
       northStar: "Win by connecting innovation, quality, and scale-up urgency to practical execution support that reduces friction in complex environments.",
       whatChanged: [
         "Scale-up, manufacturing readiness, and quality continuity remain central themes for both J&J and Eli Lilly.",
@@ -842,6 +1000,41 @@ export const sampleData = {
       id: "tech",
       name: "Tech",
       subline: "Growth watchlist",
+      status: "Industry war room",
+      focus: "AI, platforms, product, cloud, efficiency",
+      target: "Growth watch",
+      marketPosition:
+        "Tech should be tracked as a growth industry room so you can build a sharper point of view before the work arrives. The best watchouts are product velocity, platform reliability, AI differentiation, and efficiency pressure.",
+      consultantPositioning:
+        "Use this room to build a smarter future narrative around product velocity, AI, and efficient execution support.",
+      signals: [
+        {
+          title: "AI competition is changing how tech companies talk about differentiation and speed",
+          summary:
+            "The market is rewarding companies that can connect AI ambition to clearer product and platform outcomes.",
+          whyItMatters:
+            "A future tech narrative needs to sound like acceleration with discipline, not hype.",
+          sourceLabel: "Tech growth watch",
+          sourceUrl: "#",
+          nextStep:
+            "Start capturing what proof would make Insight Global sound credible in tech-led product and AI conversations."
+        }
+      ],
+      painHierarchy: [
+        {
+          issue: "Efficiency pressure and innovation pressure are happening at the same time.",
+          whyItMatters:
+            "That makes a future tech story strongest when it sounds like speed without chaos.",
+          response:
+            "Track which operational proof points could translate cleanly into a tech growth narrative."
+        }
+      ],
+      reminders: [
+        "Track signals, but keep this room lightweight until the portfolio deepens."
+      ],
+      notes: [
+        "This is a growth watch room, not a fully mature portfolio room yet."
+      ],
       northStar: "Track where AI, cloud, platform, and product shifts create narrative openings for Insight Global to sound more strategic in tech-led conversations.",
       whatChanged: [
         "AI platform competition is changing how companies talk about talent, speed, and differentiation.",
@@ -864,6 +1057,41 @@ export const sampleData = {
       id: "telecom",
       name: "Telecom",
       subline: "Growth watchlist",
+      status: "Industry war room",
+      focus: "Infrastructure, modernization, CX, simplification",
+      target: "Growth watch",
+      marketPosition:
+        "Telecom should be monitored as a growth industry room with an eye toward modernization, infrastructure complexity, customer experience, and cost discipline. The opportunity is to understand the pressure pattern before the portfolio expands.",
+      consultantPositioning:
+        "Use this room to build a cleaner POV on modernization, reliability, and operational simplification.",
+      signals: [
+        {
+          title: "Modernization and customer experience pressure continue to shape telecom strategy",
+          summary:
+            "Telecom organizations are still balancing infrastructure complexity with the need to simplify experience and cost.",
+          whyItMatters:
+            "That makes the future story more about operational improvement than abstract transformation.",
+          sourceLabel: "Telecom growth watch",
+          sourceUrl: "#",
+          nextStep:
+            "Track which reliability, modernization, and execution stories could translate into telecom relevance later."
+        }
+      ],
+      painHierarchy: [
+        {
+          issue: "Telecom transformation needs to sound like simplification and reliability, not just change.",
+          whyItMatters:
+            "That is often where industry narratives become too generic to help.",
+          response:
+            "Keep this room focused on pressure patterns and repeatable themes until the industry becomes more active for you."
+        }
+      ],
+      reminders: [
+        "Use this as a growth watch room and build pattern recognition before opportunity spikes."
+      ],
+      notes: [
+        "This is an early-stage war room designed for growth tracking."
+      ],
       northStar: "Track how infrastructure modernization, network experience, and operational efficiency create room for a stronger industry point of view.",
       whatChanged: [
         "Network modernization and customer experience still shape strategic priorities.",
